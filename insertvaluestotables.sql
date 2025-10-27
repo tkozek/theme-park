@@ -1,0 +1,83 @@
+-- Ride
+INSERT INTO Ride VALUES ('RollerCoaster', 40, TO_DATE('2015-06-01', 'YYYY-MM-DD', 'YYYY-MM-DD'));
+INSERT INTO Ride VALUES ('FerrisWheel', 30, TO_DATE(TO_DATE('2010-04-12', 'YYYY-MM-DD')));
+INSERT INTO Ride VALUES ('HauntedHouse', 20, TO_DATE('2018-10-10', 'YYYY-MM-DD'));
+INSERT INTO Ride VALUES ('LogFlume', 25, TO_DATE('2012-07-21', 'YYYY-MM-DD'));
+INSERT INTO Ride VALUES ('BumperCars', 15, TO_DATE('2011-09-14', 'YYYY-MM-DD'));
+
+-- Customer
+INSERT INTO Customer VALUES (1, 'Alice Johnson', 'F', TO_DATE('1990-05-14', 'YYYY-MM-DD'));
+INSERT INTO Customer VALUES (2, 'Bob Smith', 'M', TO_DATE('1988-08-09', 'YYYY-MM-DD'));
+INSERT INTO Customer VALUES (3, 'Carol White', 'F', TO_DATE('1995-11-02', 'YYYY-MM-DD'));
+INSERT INTO Customer VALUES (4, 'David Brown', 'M', TO_DATE('2000-01-25', 'YYYY-MM-DD'));
+INSERT INTO Customer VALUES (5, 'Eve Davis', 'F', TO_DATE('1993-03-07', 'YYYY-MM-DD'));
+
+-- Booking2
+INSERT INTO Booking2 VALUES (1001, TO_DATE('2023-07-10', 'YYYY-MM-DD'), 1);
+INSERT INTO Booking2 VALUES (1002, TO_DATE('2023-07-12', 'YYYY-MM-DD'), 2);
+INSERT INTO Booking2 VALUES (1003, TO_DATE('2023-07-14', 'YYYY-MM-DD'), 3);
+INSERT INTO Booking2 VALUES (1004, TO_DATE('2023-07-16', 'YYYY-MM-DD'), 4);
+INSERT INTO Booking2 VALUES (1005, TO_DATE('2023-07-18', 'YYYY-MM-DD'), 5);
+
+-- Booking1
+INSERT INTO Booking1 VALUES (TO_DATE('2023-07-10', 'YYYY-MM-DD'), 120);
+INSERT INTO Booking1 VALUES (TO_DATE('2023-07-12', 'YYYY-MM-DD'), 90);
+INSERT INTO Booking1 VALUES (TO_DATE('2023-07-14', 'YYYY-MM-DD'), 150);
+INSERT INTO Booking1 VALUES (TO_DATE('2023-07-16', 'YYYY-MM-DD'), 110);
+INSERT INTO Booking1 VALUES (TO_DATE('2023-07-18', 'YYYY-MM-DD'), 200);
+
+-- RateModifier
+INSERT INTO RateModifier VALUES (0, 1.0);
+INSERT INTO RateModifier VALUES (1, 0.9);
+INSERT INTO RateModifier VALUES (2, 1.1);
+INSERT INTO RateModifier VALUES (3, 0.8);
+INSERT INTO RateModifier VALUES (4, 1.2);
+
+-- RoomType
+INSERT INTO RoomType VALUES ('Single', 1, 'Economy', 100.0);
+INSERT INTO RoomType VALUES ('Double', 2, 'Standard', 150.0);
+INSERT INTO RoomType VALUES ('Suite', 4, 'Luxury', 300.0);
+INSERT INTO RoomType VALUES ('Penthouse', 6, 'Premium', 500.0);
+INSERT INTO RoomType VALUES ('Cabin', 3, 'Rustic', 120.0);
+
+-- Hotel1
+INSERT INTO Hotel1 VALUES ('A1B2C3', 'BC', 'Vancouver');
+INSERT INTO Hotel1 VALUES ('B2C3D4', 'AB', 'Calgary');
+INSERT INTO Hotel1 VALUES ('C3D4E5', 'ON', 'Toronto');
+INSERT INTO Hotel1 VALUES ('D4E5F6', 'QC', 'Montreal');
+INSERT INTO Hotel1 VALUES ('E5F6G7', 'NS', 'Halifax');
+
+-- Hotel2
+INSERT INTO Hotel2 VALUES ('OceanView', 200, 'A1B2C3');
+INSERT INTO Hotel2 VALUES ('MountainInn', 150, 'B2C3D4');
+INSERT INTO Hotel2 VALUES ('CityCenter', 300, 'C3D4E5');
+INSERT INTO Hotel2 VALUES ('LakesideLodge', 100, 'D4E5F6');
+INSERT INTO Hotel2 VALUES ('HarborHotel', 180, 'E5F6G7');
+
+-- Ticket1
+INSERT INTO Ticket1 VALUES (TO_DATE('2023-07-01', 'YYYY-MM-DD'), TO_DATE('2023-07-31', 'YYYY-MM-DD'), 8);
+INSERT INTO Ticket1 VALUES (TO_DATE('2023-08-01', 'YYYY-MM-DD'), TO_DATE('2023-08-31', 'YYYY-MM-DD'), 10);
+INSERT INTO Ticket1 VALUES (TO_DATE('2023-09-01', 'YYYY-MM-DD'), TO_DATE('2023-09-30', 'YYYY-MM-DD'), 6);
+INSERT INTO Ticket1 VALUES (TO_DATE('2023-10-01', 'YYYY-MM-DD'), TO_DATE('2023-10-31', 'YYYY-MM-DD'), 12);
+INSERT INTO Ticket1 VALUES (TO_DATE('2023-11-01', 'YYYY-MM-DD'), TO_DATE('2023-11-30', 'YYYY-MM-DD'), 4);
+
+-- Ticket2
+INSERT INTO Ticket2 VALUES (5001, 1001, TO_DATE('2023-07-01', 'YYYY-MM-DD'), 5, 8);
+INSERT INTO Ticket2 VALUES (5002, 1002, TO_DATE('2023-08-01', 'YYYY-MM-DD'), 3, 10);
+INSERT INTO Ticket2 VALUES (5003, 1003, TO_DATE('2023-09-01', 'YYYY-MM-DD'), 2, 6);
+INSERT INTO Ticket2 VALUES (5004, 1004, TO_DATE('2023-10-01', 'YYYY-MM-DD'), 4, 12);
+INSERT INTO Ticket2 VALUES (5005, 1005, TO_DATE('2023-11-01', 'YYYY-MM-DD'), 1, 4);
+
+-- FastPassTicket
+INSERT INTO FastPassTicket VALUES (5001, 10, 8);
+INSERT INTO FastPassTicket VALUES (5002, 8, 10);
+INSERT INTO FastPassTicket VALUES (5003, 5, 6);
+INSERT INTO FastPassTicket VALUES (5004, 7, 12);
+INSERT INTO FastPassTicket VALUES (5005, 3, 4);
+
+-- MaintenanceRecord1
+INSERT INTO MaintenanceRecord1 VALUES ('Oil Change', 2);
+INSERT INTO MaintenanceRecord1 VALUES ('Brake Inspection', 3);
+INSERT INTO MaintenanceRecord1 VALUES ('Structural Check', 4);
+INSERT INTO MaintenanceRecord1 VALUES ('Electrical Test', 2);
+INSERT INTO MaintenanceRecord1 VALUES ('Safety Audit', 5);
