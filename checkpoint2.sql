@@ -7,15 +7,15 @@ When looking at this SQL file, there are 2 parts
 
 -- 1. Table Initializations
 CREATE TABLE Ride (
-  RideName      VARCHAR(255) PRIMARY KEY,
+  RideName      VARCHAR2(255) PRIMARY KEY,
   Capacity      INTEGER,       -- should CHECK (Capacity > 0)
   InstallDate   DATE
 );
 
 CREATE TABLE Customer (
   CustomerID    INTEGER PRIMARY KEY,
-  CustomerName  VARCHAR(255),
-  Sex           VARCHAR(255),
+  CustomerName  VARCHAR2(255),
+  Sex           VARCHAR2(255),
   DOB           DATE
 );
 
@@ -46,9 +46,9 @@ CREATE TABLE RateModifier (
 );
 
 CREATE TABLE RoomType2 (
-  RoomName      VARCHAR(255) PRIMARY KEY,
+  RoomName      VARCHAR2(255) PRIMARY KEY,
   MaxGuests     INTEGER,       -- should CHECK (MaxGuests > 0)
-  Category      VARCHAR(255),
+  Category      VARCHAR2(255),
   CONSTRAINT fk_roomtype1 FOREIGN KEY (Category)
     REFERENCES RoomType1 (Category)
     -- if a room type is deleted, we should set it to null
@@ -58,15 +58,15 @@ CREATE TABLE RoomType2 (
 );
 
 CREATE TABLE RoomType1 (
-  Category      VARCHAR(255) PRIMARY KEY,
+  Category      VARCHAR2(255) PRIMARY KEY,
   BaseRate      FLOAT
 );
 
 
 CREATE TABLE Hotel2 (
-  HotelName     VARCHAR(255) PRIMARY KEY,
+  HotelName     VARCHAR2(255) PRIMARY KEY,
   MaxGuests     INTEGER,
-  PostalCode    VARCHAR(255),
+  PostalCode    VARCHAR2(255),
   CONSTRAINT fk_hotel2 FOREIGN KEY (PostalCode)
     REFERENCES Hotel2 (PostalCode)
     -- if postal codes are deleted, we should still keep the info
@@ -76,9 +76,9 @@ CREATE TABLE Hotel2 (
 );
 
 CREATE TABLE Hotel1 (
-  PostalCode    VARCHAR(255) PRIMARY KEY,
-  Province      VARCHAR(255),
-  City          VARCHAR(255)
+  PostalCode    VARCHAR2(255) PRIMARY KEY,
+  Province      VARCHAR2(255),
+  City          VARCHAR2(255)
 );
 
 CREATE TABLE Ticket2 (
@@ -135,7 +135,7 @@ CREATE TABLE LoyaltyMember (
 
 CREATE TABLE SeasonPass2 (
   UUID            INTEGER PRIMARY KEY,
-  SeasonPassLevel VARCHAR(255),
+  SeasonPassLevel VARCHAR2(255),
   SeasonStart     DATE,
   SeasonEnd       DATE,
   LoyaltyID       INTEGER UNIQUE NOT NULL,
@@ -148,7 +148,7 @@ CREATE TABLE SeasonPass2 (
 );
 
 CREATE TABLE SeasonPass1 (
-  SeasonPassLevel VARCHAR(255),
+  SeasonPassLevel VARCHAR2(255),
   SeasonStart     DATE,
   SeasonEnd       DATE,
   PRIMARY KEY (SeasonPassLevel, SeasonStart),
@@ -196,8 +196,8 @@ CREATE TABLE BookedWithRateModifier (
 );
 
 CREATE TABLE OffersRoomType (
-  HotelName     VARCHAR(255),
-  RoomName      VARCHAR(255),
+  HotelName     VARCHAR2(255),
+  RoomName      VARCHAR2(255),
   Quantity      INTEGER,       -- should CHECK (Quantity >= 0)
   PRIMARY KEY (HotelName, RoomName),
   CONSTRAINT fk_offers_hotel FOREIGN KEY (HotelName)
@@ -215,8 +215,8 @@ CREATE TABLE HotelStay (
   NumGuests      INTEGER,       -- should CHECK (NumGuests > 0)
   CheckInDate    DATE,
   CheckOutDate   DATE,
-  HotelName      VARCHAR(255) NOT NULL,
-  RoomName       VARCHAR(255) NOT NULL,
+  HotelName      VARCHAR2(255) NOT NULL,
+  RoomName       VARCHAR2(255) NOT NULL,
   BookingNumber  INTEGER NOT NULL,
   CONSTRAINT fk_hs_hotel FOREIGN KEY (HotelName)
     REFERENCES Hotel2 (HotelName)
@@ -239,7 +239,7 @@ CREATE TABLE HotelStay (
 );
 
 CREATE TABLE ForRide (
-  RideName  VARCHAR(255),
+  RideName  VARCHAR2(255),
   TicketID  INTEGER,
   PRIMARY KEY (RideName, TicketID),
   CONSTRAINT fk_forride_ride FOREIGN KEY (RideName)
@@ -257,14 +257,14 @@ CREATE TABLE ForRide (
 );
 
 CREATE TABLE MaintenanceRecord1 (
-  MaintenancePerformed VARCHAR(255) PRIMARY KEY,
+  MaintenancePerformed VARCHAR2(255) PRIMARY KEY,
   NumberOfWorkers      INTEGER        -- should CHECK (NumberOfWorkers >= 0)
 );
 
 CREATE TABLE MaintenanceRecord2 (
-  RideName             VARCHAR(255),
+  RideName             VARCHAR2(255),
   RecordID             INTEGER,
-  MaintenancePerformed VARCHAR(255),
+  MaintenancePerformed VARCHAR2(255),
   MaintenanceDate      DATE,
   PRIMARY KEY (RideName, RecordID),
   CONSTRAINT fk_mr2_ride FOREIGN KEY (RideName)
