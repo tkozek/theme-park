@@ -4,8 +4,8 @@
 
 - Jaden Majid
   - 94916335
-- Trevor
-  - TREVOR's STUDENT NUMBER
+- Trevor Kozek
+  - 29541778
 - Raymond Lee 
   - 36028942
 
@@ -20,12 +20,6 @@ guest activity, apply rate modifiers, validate ride access, and track maintenanc
 
 ### Milestone 3
 
-- [ ] Coverpage
-- [ ] Summary
-- [ ] Timeline
-- [ ] Description of Challenges
-- [ ] M1 in repo
-- [x] M2 in repo
 
 ### Milestone 4
 
