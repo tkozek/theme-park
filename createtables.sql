@@ -101,13 +101,10 @@ CREATE TABLE Ticket2 (
   ValidHours    INTEGER,       -- should CHECK (ValidHours >= 0)
   CONSTRAINT fk_ticket2_booking FOREIGN KEY (BookingNumber)
     REFERENCES Booking2 (BookingNumber)
-    ON DELETE CASCADE
-    ,
+    ON DELETE CASCADE,
   CONSTRAINT fk_ticket2_ticket1 FOREIGN KEY (ValidFrom, ValidHours)
-
     REFERENCES Ticket1 (ValidFrom, ValidHours)
     ON DELETE CASCADE
-    
 );
 
 
@@ -121,11 +118,12 @@ CREATE TABLE FastPassTicket (
   ValidHours    INTEGER,      
   CONSTRAINT fk_fastpass_ticket FOREIGN KEY (TicketID)
     REFERENCES Ticket2 (TicketID)
-    
     ON DELETE CASCADE
 );
 
 
+-- Should always reference some customer
+-- We should delete customer records when a customer deletes their information
 -- should CHECK (Points >= 0)
 CREATE TABLE LoyaltyMember (
   CustomerID    INTEGER PRIMARY KEY,
@@ -134,9 +132,6 @@ CREATE TABLE LoyaltyMember (
   UUID          INTEGER UNIQUE,
   CONSTRAINT fk_customerid FOREIGN KEY (CustomerID) 
     REFERENCES Customer(CustomerID)
-    -- Should always reference some customer
-     
-    -- We should delete customer records when a customer deletes their information
     ON DELETE CASCADE
 );
 
@@ -200,7 +195,6 @@ CREATE TABLE BookedWithRateModifier (
   CONSTRAINT fk_bwrm_rate FOREIGN KEY (RateCode)
     REFERENCES RateModifier (RateCode)
     
-  -- Bookings booked with rate modifiers point to a default ratecode with Modifier=1.0 when its ratecode is deleted 
     ON DELETE SET NULL,
   CONSTRAINT fk_bwrm_booking FOREIGN KEY (BookingNumber)
     REFERENCES Booking2 (BookingNumber)
