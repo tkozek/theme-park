@@ -42,7 +42,7 @@ CREATE TABLE RoomType2 (
   RoomName      VARCHAR2(255) PRIMARY KEY,
   MaxGuests     INTEGER,       -- should CHECK (MaxGuests > 0)
   Category      VARCHAR2(255),
-  CONSTRAINT fk_roomtype1 FOREIGN KEY RoomType2(Category)
+  CONSTRAINT fk_roomtype1 FOREIGN KEY (Category)
     REFERENCES RoomType1 (Category)
     -- if a room type is deleted, we should set it to null
     ON DELETE SET NULL
@@ -80,13 +80,13 @@ CREATE TABLE Ticket2 (
   ValidFrom     DATE,
   RemainingUses INTEGER,       -- should CHECK (RemainingUses >= 0)
   ValidHours    INTEGER,       -- should CHECK (ValidHours >= 0)
-  CONSTRAINT fk_ticket2_booking FOREIGN KEY Ticket2(BookingNumber)
+  CONSTRAINT fk_ticket2_booking FOREIGN KEY (BookingNumber)
     REFERENCES Booking2 (BookingNumber)
     -- When bookings are deleted(like a cancellation or refund), any associated tickets should be deleted as well
     ON DELETE CASCADE
     -- Booking numbers should not be updated, in cases where they are, tickets that reference them should still reference the same booking 
     ,
-  CONSTRAINT fk_ticket2_ticket1 FOREIGN KEY Ticket2(ValidFrom, ValidHours)
+  CONSTRAINT fk_ticket2_ticket1 FOREIGN KEY (ValidFrom, ValidHours)
     REFERENCES Ticket1 (ValidFrom, ValidHours)
     -- When tickets are deleted, they should be cascaded in all locations
     ON DELETE CASCADE
@@ -181,7 +181,7 @@ CREATE TABLE BookedWithRateModifier (
     -- Bookings should always point to the same RateCode, even if that ratecode is changed
     
   -- Bookings booked with rate modifiers point to a default ratecode with Modifier=1.0 when its ratecode is deleted 
-    ON DELETE SET DEFAULT,
+    ON DELETE SET 0,
   CONSTRAINT fk_bwrm_booking FOREIGN KEY (BookingNumber)
     REFERENCES Booking2 (BookingNumber)
     -- When booking are deleted, references to it become invalid so should be deleted too
