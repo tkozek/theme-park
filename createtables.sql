@@ -80,8 +80,8 @@ CREATE TABLE Hotel2 (
 
 -- should CHECK (ValidHours >= 0)
 CREATE TABLE Ticket1 (
-  ValidFrom     DATE,
-  ValidHours    INTEGER,      
+  ValidFrom     DATE NOT NULL,
+  ValidHours    INTEGER CHECK (ValidHours >= 0),      
   ValidUntil    DATE,
   PRIMARY KEY (ValidFrom, ValidHours)
 );
