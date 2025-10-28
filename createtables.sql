@@ -142,6 +142,7 @@ CREATE TABLE SeasonPass2 (
   SeasonStart     DATE,
   SeasonEnd       DATE,
   LoyaltyID       INTEGER UNIQUE NOT NULL,
+  CONSTRAINT unique_seasonpasslevel_seasonstart UNIQUE (SeasonPassLevel, SeasonStart),
   CONSTRAINT fk_seasonpass_loyalty FOREIGN KEY (LoyaltyID)
     REFERENCES LoyaltyMember (LoyaltyID)
     ON DELETE CASCADE
