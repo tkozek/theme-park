@@ -295,4 +295,3 @@ create table guests (
       references customer ( customerid )
          on delete cascade
 );
-/

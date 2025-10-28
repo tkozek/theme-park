@@ -3,4 +3,4 @@ BEGIN
     EXECUTE IMMEDIATE 'DROP TABLE ' || t.table_name || ' CASCADE CONSTRAINTS';
   END LOOP;
 END;
-/
+
