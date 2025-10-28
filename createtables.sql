@@ -57,7 +57,8 @@ CREATE TABLE RoomType2 (
   MaxGuests     INTEGER,      
   Category      VARCHAR2(255),
   CONSTRAINT fk_roomtype1 FOREIGN KEY (Category)
-    REFERENCES RoomType1(Category)
+    REFERENCES Category)
+    -- if a room type is deleted, we should set it to null
     ON DELETE SET NULL
     
 );
@@ -99,13 +100,14 @@ CREATE TABLE Ticket2 (
   TicketID      INTEGER PRIMARY KEY,
   BookingNumber INTEGER,
   ValidFrom     DATE,
-  RemainingUses INTEGER,      
-  ValidHours    INTEGER,      
-  CONSTRAINT fk_ticket2_booking FOREIGN KEY Ticket1(BookingNumber)
+  RemainingUses INTEGER,       -- should CHECK (RemainingUses >= 0)
+  ValidHours    INTEGER,       -- should CHECK (ValidHours >= 0)
+  CONSTRAINT fk_ticket2_booking FOREIGN KEY (BookingNumber)
     REFERENCES Booking2 (BookingNumber)
     ON DELETE CASCADE
     ,
-  CONSTRAINT fk_ticket2_ticket1 FOREIGN KEY Ticket1(ValidFrom, ValidHours)
+  CONSTRAINT fk_ticket2_ticket1 FOREIGN KEY (ValidFrom, ValidHours)
+
     REFERENCES Ticket1 (ValidFrom, ValidHours)
     ON DELETE CASCADE
     
@@ -201,7 +203,8 @@ CREATE TABLE BookedWithRateModifier (
   CONSTRAINT fk_bwrm_rate FOREIGN KEY (RateCode)
     REFERENCES RateModifier (RateCode)
     
-    ON DELETE SET DEFAULT,
+  -- Bookings booked with rate modifiers point to a default ratecode with Modifier=1.0 when its ratecode is deleted 
+    ON DELETE SET 0,
   CONSTRAINT fk_bwrm_booking FOREIGN KEY (BookingNumber)
     REFERENCES Booking2 (BookingNumber)
     ON DELETE CASCADE
