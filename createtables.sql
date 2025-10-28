@@ -288,7 +288,7 @@ create table maintenancerecord2 (
 
 -- When a customer is deleted, their Guest info should be deleted too(Data Privacy reasons)
 -- Guests should always be attached to the same Customer object
-create table guest (
+create table guests (
    customerid  integer primary key,
    dateofvisit date,
    constraint fk_guest_customer foreign key ( customerid )
