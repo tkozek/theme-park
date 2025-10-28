@@ -281,4 +281,3 @@ CREATE TABLE Guest (
     REFERENCES Customer (CustomerID)
     ON DELETE CASCADE
 );
-
