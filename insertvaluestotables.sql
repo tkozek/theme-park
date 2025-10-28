@@ -81,3 +81,4 @@ INSERT INTO MaintenanceRecord1 VALUES ('Brake Inspection', 3);
 INSERT INTO MaintenanceRecord1 VALUES ('Structural Check', 4);
 INSERT INTO MaintenanceRecord1 VALUES ('Electrical Test', 2);
 INSERT INTO MaintenanceRecord1 VALUES ('Safety Audit', 5);
+/

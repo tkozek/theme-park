@@ -8,3 +8,4 @@ When looking at this SQL file, there are 2 parts
 start createtables.sql
 -- 2. Insert Statements
 start insertvaluesintotables.sql
+/
