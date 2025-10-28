@@ -1,6 +1,6 @@
 -- 1. Table Initializations
 
-
+SHOW ERRORS
 -- should CHECK (Capacity > 0)
 CREATE TABLE Ride (
   RideName      VARCHAR2(255) PRIMARY KEY,
@@ -76,14 +76,13 @@ CREATE TABLE Hotel2 (
   CONSTRAINT fk_hotel2 FOREIGN KEY (PostalCode)
     REFERENCES Hotel1 (PostalCode)
     ON DELETE SET NULL
-    
 );
 
 -- should CHECK (ValidHours >= 0)
 CREATE TABLE Ticket1 (
   ValidFrom     DATE,
-  ValidUntil    DATE,
   ValidHours    INTEGER,      
+  ValidUntil    DATE,
   PRIMARY KEY (ValidFrom, ValidHours)
 );
 
