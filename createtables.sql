@@ -58,9 +58,7 @@ CREATE TABLE RoomType2 (
   Category      VARCHAR2(255),
   CONSTRAINT fk_roomtype1 FOREIGN KEY (Category)
     REFERENCES RoomType1(Category)
-    -- if a room type is deleted, we should set it to null
     ON DELETE SET NULL
-    
 );
 
 CREATE TABLE Hotel1 (
@@ -298,15 +296,15 @@ CREATE TABLE MaintenanceRecord2 (
     
 );
 
+-- When a customer is deleted, their Guest info should be deleted too(Data Privacy reasons)
+-- Guests should always be attached to the same Customer object
 CREATE TABLE Guest (
   CustomerID  INTEGER,
   DateOfVisit DATE,
   PRIMARY KEY (CustomerID),
   CONSTRAINT fk_guest_customer FOREIGN KEY (CustomerID)
     REFERENCES Customer (CustomerID)
-    -- When a customer is deleted, their Guest info should be deleted too(Data Privacy reasons)
     ON DELETE CASCADE
-    -- Guests should always be attached to the same Customer object
     
 );
 /
