@@ -14,6 +14,8 @@ const dbConfig = {
     poolTimeout: 60
 };
 
+
+
 // initialize connection pool
 async function initializeConnectionPool() {
     try {
