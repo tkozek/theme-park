@@ -1,10 +1,11 @@
 -- 1. Table Initializations
 
--- should CHECK (Capacity > 0)
+-- should 
 CREATE TABLE Ride (
   RideName      VARCHAR2(255) PRIMARY KEY,
   Capacity      INTEGER,      
-  InstallDate   DATE
+  InstallDate   DATE,
+  CHECK (Capacity > 0)
 );
 
 
@@ -16,10 +17,11 @@ CREATE TABLE Customer (
 );
 
 
--- should CHECK (Cost >= 0)
+-- should 
 CREATE TABLE Booking1 (
   BookingDate   DATE PRIMARY KEY,
-  Cost          INTEGER      
+  Cost          INTEGER,
+  CHECK (Cost >= 0)
 );
 
 -- Bookings should be kept even if a customer deletes their account
@@ -48,7 +50,7 @@ CREATE TABLE RoomType1 (
   BaseRate      FLOAT
 );
 
--- should CHECK (MaxGuests > 0)
+-- should 
 -- if a room type is deleted, we should set it to null
 -- roomtypes should follow changes in base rate, so cascade
 CREATE TABLE RoomType2 (
@@ -57,7 +59,8 @@ CREATE TABLE RoomType2 (
   Category      VARCHAR2(255),
   CONSTRAINT fk_roomtype1 FOREIGN KEY (Category)
     REFERENCES RoomType1(Category)
-    ON DELETE SET NULL
+    ON DELETE SET NULL,
+  CHECK (MaxGuests > 0)
 );
 
 CREATE TABLE Hotel1 (
@@ -77,7 +80,6 @@ CREATE TABLE Hotel2 (
     ON DELETE SET NULL
 );
 
--- should CHECK (ValidHours >= 0)
 CREATE TABLE Ticket1 (
   ValidFrom     DATE NOT NULL,
   ValidHours    INTEGER CHECK (ValidHours >= 0),      
@@ -86,8 +88,6 @@ CREATE TABLE Ticket1 (
 );
 
 
--- should CHECK (RemainingUses >= 0)
--- should CHECK (ValidHours >= 0)
 -- When bookings are deleted(like a cancellation or refund), any associated tickets should be deleted as well
 -- Booking numbers should not be updated, in cases where they are, tickets that reference them should still reference the same booking 
 -- When tickets are deleted, they should be cascaded in all locations
@@ -96,8 +96,8 @@ CREATE TABLE Ticket2 (
   TicketID      INTEGER PRIMARY KEY,
   BookingNumber INTEGER,
   ValidFrom     DATE,
-  RemainingUses INTEGER,       -- should CHECK (RemainingUses >= 0)
-  ValidHours    INTEGER,       -- should CHECK (ValidHours >= 0)
+  RemainingUses INTEGER CHECK (RemainingUses >= 0),       -- should CHECK (RemainingUses >= 0)
+  ValidHours    INTEGER CHECK (ValidHours >= 0),       -- should CHECK (ValidHours >= 0)
   CONSTRAINT fk_ticket2_booking FOREIGN KEY (BookingNumber)
     REFERENCES Booking2 (BookingNumber)
     ON DELETE CASCADE,
@@ -107,8 +107,6 @@ CREATE TABLE Ticket2 (
 );
 
 
--- should CHECK (NumberOfRides >= 0)
--- should CHECK (ValidHours >= 0)
 -- When tickets IDs are changed, they should still be fastpass tickets
 -- When tickets are deleted, the associated fastpass information should also be deleted
 CREATE TABLE FastPassTicket (
@@ -117,13 +115,15 @@ CREATE TABLE FastPassTicket (
   ValidHours    INTEGER,      
   CONSTRAINT fk_fastpass_ticket FOREIGN KEY (TicketID)
     REFERENCES Ticket2 (TicketID)
-    ON DELETE CASCADE
+    ON DELETE CASCADE,
+
+  CHECK (NumberOfRides >= 0),
+  CHECK (ValidHours >= 0)
 );
 
 
 -- Should always reference some customer
 -- We should delete customer records when a customer deletes their information
--- should CHECK (Points >= 0)
 CREATE TABLE LoyaltyMember (
   CustomerID    INTEGER PRIMARY KEY,
   LoyaltyID     INTEGER UNIQUE,
@@ -131,7 +131,8 @@ CREATE TABLE LoyaltyMember (
   UUID          INTEGER UNIQUE,
   CONSTRAINT fk_customerid FOREIGN KEY (CustomerID) 
     REFERENCES Customer(CustomerID)
-    ON DELETE CASCADE
+    ON DELETE CASCADE,
+  CHECK (Points >= 0)
 );
 
 -- Should never be triggered, but SeasonPasses should be tied to one user
@@ -191,7 +192,6 @@ CREATE TABLE BookedWithRateModifier (
     ON DELETE CASCADE
 );
 
--- should CHECK (Quantity >= 0)
 -- Hotels should never be deleted, but in that case that it is, the Roomtypes offered should be saved for history reasons
 -- Roomtypes should never be deleted, but if they are they should be kept for history reasons
 CREATE TABLE OffersRoomType (
@@ -204,10 +204,10 @@ CREATE TABLE OffersRoomType (
     ON DELETE SET NULL,
   CONSTRAINT fk_offers_room FOREIGN KEY (RoomName)
     REFERENCES RoomType2 (RoomName)
-    ON DELETE SET NULL
+    ON DELETE SET NULL,
+  CHECK (Quantity >= 0)
 );
 
--- should CHECK (NumGuests > 0)
 -- if a hotel is deleted, hotel stays should be kept for historical reasons
 -- if a hotel changes its name, the new name should be used for all records for consistency
 -- if a roomtype is deleted, we should keep the stays 
@@ -230,7 +230,8 @@ CREATE TABLE HotelStay (
     ON DELETE SET NULL ,
   CONSTRAINT fk_hs_booking FOREIGN KEY (BookingNumber)
     REFERENCES Booking2 (BookingNumber)
-    ON DELETE CASCADE
+    ON DELETE CASCADE,
+  CHECK (NumGuests > 0)
 );
 
 -- When Rides are deleted(should never be), we should keep the ticket association with the ride just in case
@@ -249,10 +250,10 @@ CREATE TABLE ForRide (
     ON DELETE CASCADE
 );
 
--- should CHECK (NumberOfWorkers >= 0)
 CREATE TABLE MaintenanceRecord1 (
   MaintenancePerformed VARCHAR2(255) PRIMARY KEY,
-  NumberOfWorkers      INTEGER       
+  NumberOfWorkers      INTEGER,
+  CHECK (NumberOfWorkers >= 0)
 );
 
 

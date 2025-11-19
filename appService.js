@@ -80,7 +80,7 @@ async function testOracleConnection() {
 
 async function fetchDemotableFromDb() {
     return await withOracleDB(async (connection) => {
-        const result = await connection.execute('SELECT * FROM DEMOTABLE');
+        const result = await connection.execute('SELECT * FROM Guest');
         return result.rows;
     }).catch(() => {
         return [];
@@ -90,17 +90,17 @@ async function fetchDemotableFromDb() {
 async function initiateDemotable() {
     return await withOracleDB(async (connection) => {
         try {
-            await connection.execute(`DROP TABLE DEMOTABLE`);
+            await connection.execute(`
+BEGIN
+  FOR t IN (SELECT table_name FROM user_tables) LOOP
+    EXECUTE IMMEDIATE 'DROP TABLE ' || t.table_name || ' CASCADE CONSTRAINTS';
+  END LOOP;
+END;`);
         } catch(err) {
             console.log('Table might not exist, proceeding to create...');
         }
 
-        const result = await connection.execute(`
-            CREATE TABLE DEMOTABLE (
-                id NUMBER PRIMARY KEY,
-                name VARCHAR2(20)
-            )
-        `);
+        const result = await connection.execute(createalltables);
         return true;
     }).catch(() => {
         return false;
@@ -110,7 +110,7 @@ async function initiateDemotable() {
 async function insertDemotable(id, name) {
     return await withOracleDB(async (connection) => {
         const result = await connection.execute(
-            `INSERT INTO DEMOTABLE (id, name) VALUES (:id, :name)`,
+            `INSERT INTO Guest (id, name) VALUES (:id, :name)`,
             [id, name],
             { autoCommit: true }
         );
@@ -152,3 +152,7 @@ module.exports = {
     updateNameDemotable, 
     countDemotable
 };
+
+const createalltables = `
+
+`
