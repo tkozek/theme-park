@@ -64,15 +64,50 @@
 
     <br><hr><br> <!-- ========================================================================= -->
 
-    <h2> Insert Values into DemoTable </h2>
+    <h2>Query 1: INSERT Values into Customer </h2>
     <form id="insertDemotable">
-        ID: <input type="number" id="insertId" placeholder="Enter ID" required> <br><br>
-        Name: <input type="text" id="insertName" placeholder="Enter Name" maxlength="20"> <br><br>
+        CustomerID: <input type="number" id="insertId" placeholder="Enter ID" required> <br><br>
+        CustomerName: <input type="text" id="insertName" placeholder="Enter Name" maxlength="20"> <br><br>
+        Date of Birth: <input type="date" id="insertDOB" placeholder="Enter Date of Birth" maxlength="20"> <br><br>
+        Gender/Sex: <input type="text" id="insertSex" placeholder="Enter Sex" maxlength="20"> <br><br>
+        <p>Customers are either Guests or Loyalty Members (not both). <b>Please only enter the data specific to your instance</b></p>
+
+        <p><b>Guest:</b></p>
+        Date of Visit: <input type="date" id="insertVisitDate" placeholder="Enter Date of Visit" maxlength="20"> <br><br>
+
+        <p><b>Loyalty Member:</b></p>
+        LoyaltyID: <input type="text" id="insertName" placeholder="Enter Loyalty ID" maxlength="20"> <br><br>
+        Points: <input type="number" id="insertName" placeholder="Enter Points" maxlength="20"> <br><br> 
+        <!--Do we want to let this be entered, or just initialize to zero? -->
+        <b><em>Do we want to let this be entered, or just initialize to zero?</em></b>
 
         <button type="submit"> insert </button> <br>
     </form>
     <div id="insertResultMsg"></div>
 
+
+    <br><hr><br> <!-- ========================================================================= -->
+
+    <h2>Query 2: UPDATE Values in Loyalty Member </h2>
+    <form id="insertDemotable">
+        <p><b><em>Supposed to display available Customers/Loyalty members so that user can select</em></b></p>
+<!--Supposed to display available Customers/Loyalty members so that user can select -->
+        Update values for Loyalty Member with CustomerID: <input type="number" id="insertId" placeholder="Enter ID" required> <br><br>
+        Change CustomerName: <input type="text" id="insertName" placeholder="Enter Name" maxlength="20"> <br><br>
+        Change Date of Birth: <input type="date" id="insertDOB" placeholder="Enter Date of Birth" maxlength="20"> <br><br>
+        Change Gender/Sex: <input type="text" id="insertSex" placeholder="Enter Sex" maxlength="20"> <br><br>
+        <p>Customers are either Guests or Loyalty Members (not both). <b>Please only enter the data specific to your instance</b></p>
+
+        <p><b>Guest:</b></p>
+        Date of Visit: <input type="date" id="insertVisitDate" placeholder="Enter Date of Visit" maxlength="20"> <br><br>
+
+        <p><b>Loyalty Member:</b></p>
+        LoyaltyID: <input type="text" id="insertName" placeholder="Enter Loyalty ID" maxlength="20"> <br><br>
+        How many points to add: <input type="number" id="insertName" placeholder="Enter Points" maxlength="20"> <br><br>
+
+        <button type="submit"> insert </button> <br>
+    </form>
+    <div id="insertResultMsg"></div>
     <br><hr><br> <!-- ========================================================================= -->
 
     <h2>Update Name in DemoTable</h2>
