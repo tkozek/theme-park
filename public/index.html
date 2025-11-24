@@ -105,9 +105,173 @@
         LoyaltyID: <input type="text" id="insertName" placeholder="Enter Loyalty ID" maxlength="20"> <br><br>
         How many points to add: <input type="number" id="insertName" placeholder="Enter Points" maxlength="20"> <br><br>
 
+        <button type="submit"> Update </button> <br>
+    </form>
+    <div id="insertResultMsg"></div>
+
+    <br><hr><br> <!-- ========================================================================= -->
+
+    <h2>Query 3: DELETE Values in Loyalty Member </h2>
+    <form id="insertDemotable">
+<!--Supposed to display available Customers/Loyalty members so that user can select -->
+        Delete Entry for Customer with CustomerID: <input type="number" id="insertId" placeholder="Enter ID" required> <br><br>
+
+        <button type="submit"> Confirm Deletion </button> <br>
+    </form>
+    <div id="insertResultMsg"></div>
+
+    <br><hr><br> <!-- ========================================================================= -->
+
+    <h2>Query 4: Selection in ... </h2>
+    <form id="insertDemotable">
+        
+<!--Supposed to display available Customers/Loyalty members so that user can select -->
+        Update values for Loyalty Member with CustomerID: <input type="number" id="insertId" placeholder="Enter ID" required> <br><br>
+        Change CustomerName: <input type="text" id="insertName" placeholder="Enter Name" maxlength="20"> <br><br>
+        Change Date of Birth: <input type="date" id="insertDOB" placeholder="Enter Date of Birth" maxlength="20"> <br><br>
+        Change Gender/Sex: <input type="text" id="insertSex" placeholder="Enter Sex" maxlength="20"> <br><br>
+        <p>Customers are either Guests or Loyalty Members (not both). <b>Please only enter the data specific to your instance</b></p>
+
+        <p><b>Guest:</b></p>
+        Date of Visit: <input type="date" id="insertVisitDate" placeholder="Enter Date of Visit" maxlength="20"> <br><br>
+
+        <p><b>Loyalty Member:</b></p>
+        LoyaltyID: <input type="text" id="insertName" placeholder="Enter Loyalty ID" maxlength="20"> <br><br>
+        How many points to add: <input type="number" id="insertName" placeholder="Enter Points" maxlength="20"> <br><br>
+
         <button type="submit"> insert </button> <br>
     </form>
     <div id="insertResultMsg"></div>
+
+    <br><hr><br> <!-- ========================================================================= -->
+
+    <h2>Query 5: Projection on Customer </h2>
+    <form id="insertDemotable">
+        <p>Check the boxes next to the attributes you would like to view from all Customers</p>
+        <label for="customerIdCheckbox">CustomerID</label><input type="checkbox" id="customerIdCheckbox" name="customerIdCheckbox"><br><br>
+
+       <label for="customerNameCheckbox">Customer Name</label><input type="checkbox" id="customerNameCheckbox" name="customerNameCheckbox"> <br><br> 
+
+       <label for="sexCheckbox">Sex</label> <input type="checkbox" id="sexCheckbox" name="sexCheckbox"><br><br>
+
+       <label for="dobCheckbox">Date of Birth</label><input type="checkbox" id="dobCheckbox" name="dobCheckbox"><br><br>
+
+        <label for="dateofvisitcheckbox">Date of Visit</label><input type="checkbox" id="dateofvisitcheckbox" name="dateofvisitcheckbox"><br><br>
+
+        <label for="loyaltyIDCheckbox">Loyalty ID</label><input type="checkbox" id="loyaltyIDCheckbox" name="loyaltyIDCheckbox"><br><br>
+
+        <label for="pointsCheckbox">Points</label><input type="checkbox" id="pointsCheckbox" name="pointsCheckbox"><br><br>
+    
+        <button type="submit">Confirm Selection</button><br>
+    </form>
+    <div id="insertResultMsg"></div>
+
+    <br><hr><br> <!-- ========================================================================= -->
+
+    <h2>Query 6: Join in ... </h2>
+    <form id="insertDemotable">
+        Update values for Loyalty Member with CustomerID: <input type="number" id="insertId" placeholder="Enter ID" required> <br><br>
+        Change CustomerName: <input type="text" id="insertName" placeholder="Enter Name" maxlength="20"> <br><br>
+        Change Date of Birth: <input type="date" id="insertDOB" placeholder="Enter Date of Birth" maxlength="20"> <br><br>
+        Change Gender/Sex: <input type="text" id="insertSex" placeholder="Enter Sex" maxlength="20"> <br><br>
+        <p>Customers are either Guests or Loyalty Members (not both). <b>Please only enter the data specific to your instance</b></p>
+
+        <p><b>Guest:</b></p>
+        Date of Visit: <input type="date" id="insertVisitDate" placeholder="Enter Date of Visit" maxlength="20"> <br><br>
+
+        <p><b>Loyalty Member:</b></p>
+        LoyaltyID: <input type="text" id="insertName" placeholder="Enter Loyalty ID" maxlength="20"> <br><br>
+        How many points to add: <input type="number" id="insertName" placeholder="Enter Points" maxlength="20"> <br><br>
+
+        <button type="submit"> insert </button> <br>
+    </form>
+    <div id="insertResultMsg"></div>
+
+    <br><hr><br> <!-- ========================================================================= -->
+
+    <h2>Query 7: Aggregation with GROUP BY: Average Number of Points Grouped by Gender/Sex </h2>
+    <form id="insertDemotable">
+        Update values for Loyalty Member with CustomerID: <input type="number" id="insertId" placeholder="Enter ID" required> <br><br>
+        Change CustomerName: <input type="text" id="insertName" placeholder="Enter Name" maxlength="20"> <br><br>
+        Change Date of Birth: <input type="date" id="insertDOB" placeholder="Enter Date of Birth" maxlength="20"> <br><br>
+        Change Gender/Sex: <input type="text" id="insertSex" placeholder="Enter Sex" maxlength="20"> <br><br>
+        <p>Customers are either Guests or Loyalty Members (not both). <b>Please only enter the data specific to your instance</b></p>
+
+        <p><b>Guest:</b></p>
+        Date of Visit: <input type="date" id="insertVisitDate" placeholder="Enter Date of Visit" maxlength="20"> <br><br>
+
+        <p><b>Loyalty Member:</b></p>
+        LoyaltyID: <input type="text" id="insertName" placeholder="Enter Loyalty ID" maxlength="20"> <br><br>
+        How many points to add: <input type="number" id="insertName" placeholder="Enter Points" maxlength="20"> <br><br>
+
+        <button type="submit"> insert </button> <br>
+    </form>
+    <div id="insertResultMsg"></div>
+
+    <br><hr><br> <!-- ========================================================================= -->
+
+    <h2>Query 8: Aggregation with HAVING in ... </h2>
+    <form id="insertDemotable">
+        Update values for Loyalty Member with CustomerID: <input type="number" id="insertId" placeholder="Enter ID" required> <br><br>
+        Change CustomerName: <input type="text" id="insertName" placeholder="Enter Name" maxlength="20"> <br><br>
+        Change Date of Birth: <input type="date" id="insertDOB" placeholder="Enter Date of Birth" maxlength="20"> <br><br>
+        Change Gender/Sex: <input type="text" id="insertSex" placeholder="Enter Sex" maxlength="20"> <br><br>
+        <p>Customers are either Guests or Loyalty Members (not both). <b>Please only enter the data specific to your instance</b></p>
+
+        <p><b>Guest:</b></p>
+        Date of Visit: <input type="date" id="insertVisitDate" placeholder="Enter Date of Visit" maxlength="20"> <br><br>
+
+        <p><b>Loyalty Member:</b></p>
+        LoyaltyID: <input type="text" id="insertName" placeholder="Enter Loyalty ID" maxlength="20"> <br><br>
+        How many points to add: <input type="number" id="insertName" placeholder="Enter Points" maxlength="20"> <br><br>
+
+        <button type="submit"> insert </button> <br>
+    </form>
+    <div id="insertResultMsg"></div>
+
+    <br><hr><br> <!-- ========================================================================= -->
+
+    <h2>Query 9: Nested Aggregation with GROUP BY:  </h2>
+    <form id="insertDemotable">
+        Update values for Loyalty Member with CustomerID: <input type="number" id="insertId" placeholder="Enter ID" required> <br><br>
+        Change CustomerName: <input type="text" id="insertName" placeholder="Enter Name" maxlength="20"> <br><br>
+        Change Date of Birth: <input type="date" id="insertDOB" placeholder="Enter Date of Birth" maxlength="20"> <br><br>
+        Change Gender/Sex: <input type="text" id="insertSex" placeholder="Enter Sex" maxlength="20"> <br><br>
+        <p>Customers are either Guests or Loyalty Members (not both). <b>Please only enter the data specific to your instance</b></p>
+
+        <p><b>Guest:</b></p>
+        Date of Visit: <input type="date" id="insertVisitDate" placeholder="Enter Date of Visit" maxlength="20"> <br><br>
+
+        <p><b>Loyalty Member:</b></p>
+        LoyaltyID: <input type="text" id="insertName" placeholder="Enter Loyalty ID" maxlength="20"> <br><br>
+        How many points to add: <input type="number" id="insertName" placeholder="Enter Points" maxlength="20"> <br><br>
+
+        <button type="submit"> insert </button> <br>
+    </form>
+    <div id="insertResultMsg"></div>
+
+    <br><hr><br> <!-- ========================================================================= -->
+
+    <h2>Query 10: Division -- Customers that have Rode all Rides </h2>
+    <form id="insertDemotable">
+        Update values for Loyalty Member with CustomerID: <input type="number" id="insertId" placeholder="Enter ID" required> <br><br>
+        Change CustomerName: <input type="text" id="insertName" placeholder="Enter Name" maxlength="20"> <br><br>
+        Change Date of Birth: <input type="date" id="insertDOB" placeholder="Enter Date of Birth" maxlength="20"> <br><br>
+        Change Gender/Sex: <input type="text" id="insertSex" placeholder="Enter Sex" maxlength="20"> <br><br>
+        <p>Customers are either Guests or Loyalty Members (not both). <b>Please only enter the data specific to your instance</b></p>
+
+        <p><b>Guest:</b></p>
+        Date of Visit: <input type="date" id="insertVisitDate" placeholder="Enter Date of Visit" maxlength="20"> <br><br>
+
+        <p><b>Loyalty Member:</b></p>
+        LoyaltyID: <input type="text" id="insertName" placeholder="Enter Loyalty ID" maxlength="20"> <br><br>
+        How many points to add: <input type="number" id="insertName" placeholder="Enter Points" maxlength="20"> <br><br>
+
+        <button type="submit"> insert </button> <br>
+    </form>
+    <div id="insertResultMsg"></div>
+
+
     <br><hr><br> <!-- ========================================================================= -->
 
     <h2>Update Name in DemoTable</h2>
