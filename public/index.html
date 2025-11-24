@@ -122,24 +122,100 @@
 
     <br><hr><br> <!-- ========================================================================= -->
 
-    <h2>Query 4: Selection in ... </h2>
-    <form id="insertDemotable">
+    <h2>Query 4: Selection in Customer </h2>
+    <div id="ruleContainer">
+        <div class="rule">
+            <select class="customerAttr">
+                <option value="CustomerID" data-type="number">CustomerID</option>
+                <option value="CustomerName" data-type="text">Name</option>
+                <option value="DOB" data-type="date">Date of Birth</option>
+                <option value="gender" data-type="text">Sex</option>
+                <option value="DateOfVisit" data-type="date">Date Of Visit</option>
+                <option value="loyaltyID" data-type="number">Loyalty ID</option>
+                <option value="points" data-type="number">Points</option>
+            </select>
+            <select class="operator">
+                <option value="none"></option>
+                <option value="leq">&le;</option>
+                <option value="geq">&ge;</option>
+                <option value="lt">&lt;</option>
+                <option value="gt">&gt;</option>
+                <option value="eq">=</option>
+                <option value="ne">&ne;</option>
+            </select>
+            <input class="valueInput" type="text" placeholder="Number for comparison" maxlength="32"> 
+            <select class="andOr" id="andOr">
+                <option value="none"></option>
+                <option value="and">And</option>
+                <option value="or">Or</option>
+            </select>
+        </div>
+    </div>
+    
+    <script>
+        document.addEventListener("change", function(e) {
+            if (e.target.classList.contains("customerAttr")) {
+                updateInputType(e.target);
+                updateOperator(e.target);
+            }
+            if (e.target.classList.contains("andOr")) {
+                if (e.target.value !== "none") {
+                    addNewRow(); // If anything was selected for AND/OR then generate option to add more filters
+                }
+            }
+        });
+
+        function updateInputType(selectedElement) {
+            const type = selectedElement.selectedOptions[0].dataset.type;
+            const input = selectedElement.parentNode.querySelector(".valueInput");
+
+            if (type === "text") {
+                input.type = "text";
+                input.placeholder = "Text for comparison";
+            } else if (type === "date") {
+                input.type = "date";
+            } else if (type === "number") {
+                input.type = "number";
+                input.placeholder = "Number for comparison";
+            }
+        }
+        function addNewRow() {
+            const container = document.getElementById("ruleContainer");
+            const template = document.querySelector(".rule").cloneNode(true);
+
+            template.querySelector(".customerAttr").value = "CustomerID"; // This will be the default attribute that displays in new row
+            template.querySelector(".operator").value = "none";
+            template.querySelector(".valueInput").value = "";
+            template.querySelector(".valueInput").type = "text";
+            template.querySelector(".andOr").value = "none";
+
+            container.appendChild(template);         
+        }
+
+        function updateOperator(selectedElement) {
+            const attribute = selectedElement.value;
+            const operatorSelect = selectedElement.parentNode.querySelector(".operator"); // select the operator class in ruleContainer
+            const fullOperatorSet = `
+                <option value="none"></option>
+                <option value="leq">&le;</option>
+                <option value="geq">&ge;</option>
+                <option value="lt">&lt;</option>
+                <option value="gt">&gt;</option>
+                <option value="eq">=</option>
+                <option value="ne">&ne;</option>`;
+            const equalityOnly = `<option value="eq">=</option>
+                <option value="ne">&ne;</option>`;
+            if (attribute === "CustomerName" || attribute === "gender") {
+                operatorSelect.innerHTML = equalityOnly; 
+                // Change the HTML within the element that has the operator class (ie the AND/OR dropdown) to match the HTML in "equalityOnly" const
+            } else {
+                operatorSelect.innerHTML = fullOperatorSet; 
+                // Change the HTML within the element that has the operator class (ie the AND/OR dropdown) to match the HTML in "fullOperatorSet" const
+            }
+        }
+    </script>
         
-<!--Supposed to display available Customers/Loyalty members so that user can select -->
-        Update values for Loyalty Member with CustomerID: <input type="number" id="insertId" placeholder="Enter ID" required> <br><br>
-        Change CustomerName: <input type="text" id="insertName" placeholder="Enter Name" maxlength="20"> <br><br>
-        Change Date of Birth: <input type="date" id="insertDOB" placeholder="Enter Date of Birth" maxlength="20"> <br><br>
-        Change Gender/Sex: <input type="text" id="insertSex" placeholder="Enter Sex" maxlength="20"> <br><br>
-        <p>Customers are either Guests or Loyalty Members (not both). <b>Please only enter the data specific to your instance</b></p>
-
-        <p><b>Guest:</b></p>
-        Date of Visit: <input type="date" id="insertVisitDate" placeholder="Enter Date of Visit" maxlength="20"> <br><br>
-
-        <p><b>Loyalty Member:</b></p>
-        LoyaltyID: <input type="text" id="insertName" placeholder="Enter Loyalty ID" maxlength="20"> <br><br>
-        How many points to add: <input type="number" id="insertName" placeholder="Enter Points" maxlength="20"> <br><br>
-
-        <button type="submit"> insert </button> <br>
+        <button type="submit"> Confirm </button> <br>
     </form>
     <div id="insertResultMsg"></div>
 
