@@ -174,11 +174,36 @@ insert into booking1 values ( to_date('2025-07-14','YYYY-MM-DD'), 150 );
 insert into booking1 values ( to_date('2025-07-16','YYYY-MM-DD'), 110 );
 insert into booking1 values ( to_date('2025-07-18','YYYY-MM-DD'), 200 );
 
+-- Customer 1 riding all rides (Alice Johnson)
 insert into booking2 values ( 1001, to_date('2025-07-10','YYYY-MM-DD'), 1 );
-insert into booking2 values ( 1002, to_date('2025-07-12','YYYY-MM-DD'), 2 );
-insert into booking2 values ( 1003, to_date('2025-07-14','YYYY-MM-DD'), 3 );
+insert into booking2 values ( 1111, to_date('2025-07-10','YYYY-MM-DD'), 1 );
+insert into booking2 values ( 1112, to_date('2025-07-10','YYYY-MM-DD'), 1 );
+insert into booking2 values ( 1113, to_date('2025-07-11','YYYY-MM-DD'), 1 );
+insert into booking2 values ( 1114, to_date('2025-07-12','YYYY-MM-DD'), 1 );
+insert into booking2 values ( 1115, to_date('2025-07-12','YYYY-MM-DD'), 1 );
+
+
+insert into booking2 values ( 1002, to_date('2025-08-01','YYYY-MM-DD'), 2 );
+
+--Customer 3 riding every ride (Carol White)
+insert into booking2 values ( 2223, to_date('2025-09-14','YYYY-MM-DD'), 3 );
+insert into booking2 values ( 2224, to_date('2025-09-14','YYYY-MM-DD'), 3 );
+insert into booking2 values ( 2225, to_date('2025-09-14','YYYY-MM-DD'), 3 );
+insert into booking2 values ( 2226, to_date('2025-09-14','YYYY-MM-DD'), 3 );
+insert into booking2 values ( 2227, to_date('2025-09-20','YYYY-MM-DD'), 3 );
+
+
+
 insert into booking2 values ( 1004, to_date('2025-07-16','YYYY-MM-DD'), 4 );
+
 insert into booking2 values ( 1005, to_date('2025-07-18','YYYY-MM-DD'), 5 );
+insert into booking2 values ( 2323, to_date('2025-07-18','YYYY-MM-DD'), 5 );
+insert into booking2 values ( 2424, to_date('2025-07-18','YYYY-MM-DD'), 5 );
+insert into booking2 values ( 2525, to_date('2025-07-18','YYYY-MM-DD'), 5 );
+insert into booking2 values ( 2626, to_date('2025-07-18','YYYY-MM-DD'), 5 );
+
+
+
 
 insert into ratemodifier values ( 0, 1.0 );
 insert into ratemodifier values ( 1, 0.9 );
@@ -222,11 +247,41 @@ insert into ticket1 values ( to_date('2025-09-01','YYYY-MM-DD'), 6, to_date('202
 insert into ticket1 values ( to_date('2025-10-01','YYYY-MM-DD'), 12, to_date('2025-10-31','YYYY-MM-DD') );
 insert into ticket1 values ( to_date('2025-11-01','YYYY-MM-DD'), 4, to_date('2025-11-30','YYYY-MM-DD') );
 
-insert into ticket2 values ( 5001, 1001, to_date('2025-07-01','YYYY-MM-DD'), 5, 8 );
+--Customer 1 riding every ride (Alice Johnson)
+insert into ticket2 values ( 5001, 1001, to_date('2025-07-10','YYYY-MM-DD'), 5, 8 );
+insert into ticket2 values ( 5112, 1111, to_date('2025-07-10','YYYY-MM-DD'), 5, 8 );
+insert into ticket2 values ( 5113, 1112, to_date('2025-07-10','YYYY-MM-DD'), 5, 8 );
+insert into ticket2 values ( 5114, 1113, to_date('2025-07-11','YYYY-MM-DD'), 5, 8 );
+insert into ticket2 values ( 5115, 1114, to_date('2025-07-12','YYYY-MM-DD'), 5, 8 );
+insert into ticket2 values ( 5116, 1115, to_date('2025-07-12','YYYY-MM-DD'), 5, 8 );
+
+
+--Customer 3 riding every ride (Carol White)
+insert into ticket2 values ( 6666, 2223, to_date('2025-09-14','YYYY-MM-DD'), 6, 8 );
+insert into ticket2 values ( 6667, 2224, to_date('2025-09-14','YYYY-MM-DD'), 7, 8 );
+insert into ticket2 values ( 6668, 2225, to_date('2025-09-14','YYYY-MM-DD'), 2, 8 );
+insert into ticket2 values ( 6669, 2226, to_date('2025-09-14','YYYY-MM-DD'), 4, 9 );
+insert into ticket2 values ( 6670, 2227, to_date('2025-09-14','YYYY-MM-DD'), 4, 8 );
+
+
+--Customer 5 riding every ride (Eve Davis)
+insert into ticket2 values ( 8886, 2323, to_date('2025-09-14','YYYY-MM-DD'), 1, 8 );
+insert into ticket2 values ( 8887, 2424, to_date('2025-09-14','YYYY-MM-DD'), 4, 8 );
+insert into ticket2 values ( 8888, 2525, to_date('2025-09-14','YYYY-MM-DD'), 3, 8 );
+insert into ticket2 values ( 8889, 2626, to_date('2025-09-14','YYYY-MM-DD'), 7, 8 );
+insert into ticket2 values ( 8890, 2727, to_date('2025-09-14','YYYY-MM-DD'), 4, 8 );
+
 insert into ticket2 values ( 5002, 1002, to_date('2025-08-01','YYYY-MM-DD'), 3, 10 );
+insert into ticket2 values ( 3333, 1002, to_date('2025-08-01','YYYY-MM-DD'), 2, 10 );
+insert into ticket2 values ( 3334, 1002, to_date('2025-08-01','YYYY-MM-DD'), 1, 10 );
+
+
 insert into ticket2 values ( 5003, 1003, to_date('2025-09-01','YYYY-MM-DD'), 2, 6 );
 insert into ticket2 values ( 5004, 1004, to_date('2025-10-01','YYYY-MM-DD'), 4, 12 );
 insert into ticket2 values ( 5005, 1005, to_date('2025-11-01','YYYY-MM-DD'), 1, 4 );
+
+
+
 
 insert into fastpassticket values ( 5001, 10, 8 );
 insert into fastpassticket values ( 5002, 8, 10 );
@@ -344,9 +399,43 @@ insert into maintenancerecord2 values ( 'HauntedHouse', 1, 'Structural Check', t
 insert into maintenancerecord2 values ( 'LogFlume', 1, 'Electrical Test', to_date('2025-04-11','YYYY-MM-DD') );
 insert into maintenancerecord2 values ( 'BumperCars', 1, 'Safety Audit', to_date('2025-05-22','YYYY-MM-DD') );
 
+
+
+-- CustomerID 1 riding all rides (Alice Johnson)
 insert into forride values ( 'RollerCoaster', 5001 );
+insert into forride values ( 'FerrisWheel', 5112 );
+insert into forride values ( 'HauntedHouse', 5113 );
+insert into forride values ( 'LogFlume', 5114 );
+insert into forride values ( 'BumperCars', 5115 );
+insert into forride values ( 'BumperCars', 5116 );
+
+--Customer 3 riding every ride (Carol White)
+insert into forride values ( 'RollerCoaster', 6666 );
+insert into forride values ( 'FerrisWheel', 6667 );
+insert into forride values ( 'HauntedHouse', 6668 );
+insert into forride values ( 'LogFlume', 6669 );
+insert into forride values ( 'BumperCars', 6670 );
+
+
+-- Customer 2 riding 3 rides (Bob Smith)
 insert into forride values ( 'FerrisWheel', 5002 );
+insert into forride values ( 'LogFlume', 3333 );
+insert into forride values ( 'RollerCoaster', 3334 );
+
+--Customer 5 riding every ride (Eve Davis)
+insert into forride values ( 'RollerCoaster', 8886 );
+insert into forride values ( 'FerrisWheel', 8887 );
+insert into forride values ( 'HauntedHouse', 8888 );
+insert into forride values ( 'LogFlume', 8889 );
+insert into forride values ( 'BumperCars', 8890 );
+
+
 insert into forride values ( 'HauntedHouse', 5003 );
+
+
 insert into forride values ( 'LogFlume', 5004 );
+
+
 insert into forride values ( 'BumperCars', 5005 );
+
 
