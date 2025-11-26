@@ -16,17 +16,5 @@ and operational data into one platform, it enables staff and management to effic
 guest activity, apply rate modifiers, validate ride access, and track maintenance.
 
 
-## Breakdown of Tasks
-
-### Milestone 3
-
-
-### Milestone 4
-
-
-
-### Milestone 5
-
-
 
 
