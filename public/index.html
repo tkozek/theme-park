@@ -11,6 +11,12 @@
     <title>Database Application</title>
 </head>
 <body>
+    <style>
+        .page {
+            display: none; 
+            /* hides all query sections on initial page load */
+        }
+    </style>
     <!-- ===================================================================================== -->
     <!-- Display the current status of the database connection. 
          !!HERE TO HELP U DEBUGGING, NOT REQUIRED IN YOUR OWN PROJECT!!
@@ -70,6 +76,7 @@
     <hr> <!-- ========================================================================= -->
 
     <div id="nav">
+        <p style="display:inline">Click on the query you'd like to expand      </p>
         <button data-show="q1">Query 1</button>
         <button data-show="q2">Query 2</button>
         <button data-show="q3">Query 3</button>
@@ -411,10 +418,10 @@
             });
         });
 
-        // Shows Query 1 by default
-        if (buttons.length > 0) {
-            buttons[0].click();
-        }
+        // // Clicks Query 1 by default
+        // if (buttons.length > 0) {
+        //     buttons[0].click();
+        // }
     </script>
     <!-- ===================================================================================== -->
     <!-- External JavaScript file that contains the functionality/logic for the operations above. -->
