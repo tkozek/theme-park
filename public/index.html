@@ -402,10 +402,16 @@
                 // Show the selected page
                 const targetPage = document.getElementById(targetId);
                 if (targetPage) targetPage.style.display = "block";
+
+                const q5form = document.getElementById("customerProjectionForm");
+                if (q5form) {
+                    const checkboxes = q5form.querySelectorAll("input[type=checkbox]");
+                    checkboxes.forEach(cb=> cb.checked = false);
+                }
             });
         });
-    
-        // Optional: show first query by default
+
+        // Shows Query 1 by default
         if (buttons.length > 0) {
             buttons[0].click();
         }
