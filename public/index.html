@@ -29,12 +29,7 @@
     <h2>Show Customers</h2>
     <table id="customersTable" border="1">
         <thead>
-            <tr>
-                <th>Customer ID</th>
-                <th>Name</th>
-                <th>Sex</th>
-                <th>Date of Birth</th>
-            </tr>
+            <tr></tr>
         </thead>
         <tbody>
         </tbody>
@@ -235,13 +230,13 @@
     <h2>Query 5: Projection on Customer </h2>
     <form id="customerProjectionForm">
         <p>Check the boxes next to the attributes you would like to view from all Customers</p>
-        <label for="customerIdCheckbox">CustomerID</label><input type="checkbox" id="customerIdCheckbox" name="customerIdCheckbox"><br><br>
+        <label for="customerIdCheckbox">CustomerID</label><input type="checkbox" id="customerIdCheckbox" name="customerIdCheckbox" checked><br><br>
 
-       <label for="customerNameCheckbox">Customer Name</label><input type="checkbox" id="customerNameCheckbox" name="customerNameCheckbox"> <br><br> 
+       <label for="customerNameCheckbox">Customer Name</label><input type="checkbox" id="customerNameCheckbox" name="customerNameCheckbox" checked> <br><br> 
 
-       <label for="sexCheckbox">Sex</label> <input type="checkbox" id="sexCheckbox" name="sexCheckbox"><br><br>
+       <label for="sexCheckbox">Sex</label> <input type="checkbox" id="sexCheckbox" name="sexCheckbox" checked><br><br>
 
-       <label for="dobCheckbox">Date of Birth</label><input type="checkbox" id="dobCheckbox" name="dobCheckbox"><br><br>
+       <label for="dobCheckbox">Date of Birth</label><input type="checkbox" id="dobCheckbox" name="dobCheckbox" checked><br><br>
 
         <label for="dateofvisitcheckbox">Date of Visit</label><input type="checkbox" id="dateofvisitcheckbox" name="dateofvisitcheckbox"><br><br>
 
@@ -302,13 +297,54 @@
 
     <br><hr><br> <!-- ========================================================================= -->
 
-    <h2>Update Customer Name</h2>
-    <p>Provide the CustomerID whose name you want to change, along with the new value.</p>
+    <h2>Update Customer Details</h2>
+    <p>Select a tuple below to edit all non-key attributes. Guest tuples only expose Guest fields, while Loyalty Members expose their loyalty attributes.</p>
     <form id="updateCustomerNameForm">
-        CustomerID: <input type="number" id="updateCustomerId" placeholder="Enter Customer ID" required> <br><br>
-        New Name: <input type="text" id="updateCustomerNewName" placeholder="Enter New Name" maxlength="255"> <br><br>
+        <label for="updateCustomerSelect">Select Customer Tuple:</label>
+        <select id="updateCustomerSelect" aria-label="Customer tuples for update">
+            <option value="">Loading customers...</option>
+        </select>
+        <div id="selectedCustomerDetails">Select a customer to view their current details.</div>
+        <input type="hidden" id="updateCustomerId">
 
-        <button type="submit"> update </button> <br>
+        <fieldset>
+            <legend>Basic Information</legend>
+            <label for="updateCustomerNewName">Customer Name:</label>
+            <input type="text" id="updateCustomerNewName" placeholder="Enter New Name" maxlength="255"> <br><br>
+
+            <label for="updateCustomerDob">Date of Birth:</label>
+            <input type="date" id="updateCustomerDob"> <br><br>
+
+            <label for="updateCustomerSex">Gender/Sex:</label>
+            <input type="text" id="updateCustomerSex" placeholder="Enter Sex" maxlength="20"> <br><br>
+        </fieldset>
+
+        <fieldset>
+            <legend>Customer Type</legend>
+            <label>
+                <input type="radio" name="updateMembershipType" value="guest"> Guest
+            </label>
+            <label>
+                <input type="radio" name="updateMembershipType" value="loyalty"> Loyalty Member
+            </label>
+        </fieldset>
+
+        <div id="guestUpdateFields" class="membership-fields" style="display: none;">
+            <h4>Guest Details</h4>
+            <label for="updateCustomerVisitDate">Date of Visit:</label>
+            <input type="date" id="updateCustomerVisitDate"> <br><br>
+        </div>
+
+        <div id="loyaltyUpdateFields" class="membership-fields" style="display: none;">
+            <h4>Loyalty Member Details</h4>
+            <label for="updateCustomerLoyaltyId">Loyalty ID:</label>
+            <input type="text" id="updateCustomerLoyaltyId" maxlength="20"> <br><br>
+
+            <label for="updateCustomerLoyaltyPoints">Points:</label>
+            <input type="number" id="updateCustomerLoyaltyPoints" min="0"> <br><br>
+        </div>
+
+        <button type="submit"> Save Changes </button> <br>
     </form>
     <!-- A placeholder to display messages related to the update operation. -->
     <div id="updateNameResultMsg"></div>

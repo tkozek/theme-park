@@ -13,6 +13,23 @@
  */
 
 
+const updateCustomerCache = new Map();
+
+const CUSTOMER_COLUMN_DEFINITIONS = [
+    { key: 'customerID', label: 'Customer ID', checkboxId: 'customerIdCheckbox' },
+    { key: 'customerName', label: 'Customer Name', checkboxId: 'customerNameCheckbox' },
+    { key: 'sex', label: 'Sex', checkboxId: 'sexCheckbox' },
+    { key: 'dateOfBirth', label: 'Date of Birth', checkboxId: 'dobCheckbox' },
+    { key: 'dateOfVisit', label: 'Date of Visit', checkboxId: 'dateofvisitcheckbox' },
+    { key: 'loyaltyID', label: 'Loyalty ID', checkboxId: 'loyaltyIDCheckbox' },
+    { key: 'loyaltyPoints', label: 'Points', checkboxId: 'pointsCheckbox' }
+];
+
+const DEFAULT_CUSTOMER_COLUMNS = ['customerID', 'customerName', 'sex', 'dateOfBirth'];
+
+let selectedCustomerColumns = new Set(DEFAULT_CUSTOMER_COLUMNS);
+let customerProfilesCache = [];
+
 // This function checks the database connection and updates its status on the frontend.
 async function checkDbConnection() {
     const statusElem = document.getElementById('dbStatus');
@@ -35,47 +52,345 @@ async function checkDbConnection() {
     }
 }
 
-// Fetches data from the Customer table and displays it.
-async function fetchAndDisplayCustomers() {
+function syncProjectionCheckboxes() {
+    CUSTOMER_COLUMN_DEFINITIONS.forEach((column) => {
+        const checkbox = document.getElementById(column.checkboxId);
+        if (checkbox) {
+            checkbox.checked = selectedCustomerColumns.has(column.key);
+        }
+    });
+}
+
+function renderCustomerTable(customers = customerProfilesCache) {
     const tableElement = document.getElementById('customersTable');
     if (!tableElement) {
         return;
     }
 
+    const headerRow = tableElement.querySelector('thead tr');
     const tableBody = tableElement.querySelector('tbody');
-    if (!tableBody) {
+    if (!headerRow || !tableBody) {
         return;
     }
 
+    headerRow.innerHTML = '';
     tableBody.innerHTML = '';
 
-    try {
-        const response = await fetch('/customers');
-        const responseData = await response.json();
-        const customers = responseData.data || [];
+    const activeColumns = CUSTOMER_COLUMN_DEFINITIONS.filter((column) => selectedCustomerColumns.has(column.key));
 
-        if (!customers.length) {
-            const row = tableBody.insertRow();
-            const cell = row.insertCell(0);
-            cell.colSpan = 4;
-            cell.textContent = 'No customers found.';
+    if (!activeColumns.length) {
+        const th = document.createElement('th');
+        th.textContent = 'No columns selected';
+        headerRow.appendChild(th);
+
+        const row = tableBody.insertRow();
+        const cell = row.insertCell(0);
+        cell.textContent = 'Use the projection form to choose at least one column.';
+        return;
+    }
+
+    activeColumns.forEach((column) => {
+        const th = document.createElement('th');
+        th.textContent = column.label;
+        headerRow.appendChild(th);
+    });
+
+    if (!Array.isArray(customers) || customers.length === 0) {
+        const row = tableBody.insertRow();
+        const cell = row.insertCell(0);
+        cell.colSpan = activeColumns.length;
+        cell.textContent = 'No customers found.';
+        return;
+    }
+
+    customers.forEach((customer) => {
+        const row = tableBody.insertRow();
+        activeColumns.forEach((column, index) => {
+            const cell = row.insertCell(index);
+            const rawValue = customer ? customer[column.key] : undefined;
+            const displayValue = rawValue === undefined || rawValue === null || rawValue === '' ? '--' : rawValue;
+            cell.textContent = displayValue;
+        });
+    });
+}
+
+function handleCustomerProjectionSubmit(event) {
+    event.preventDefault();
+
+    const updatedColumns = CUSTOMER_COLUMN_DEFINITIONS.filter((column) => {
+        const checkbox = document.getElementById(column.checkboxId);
+        return checkbox ? checkbox.checked : false;
+    }).map((column) => column.key);
+
+    if (!updatedColumns.length) {
+        alert('Select at least one column to display.');
+        return;
+    }
+
+    selectedCustomerColumns = new Set(updatedColumns);
+    renderCustomerTable(customerProfilesCache);
+}
+
+function normalizeCustomerProfile(customerRow = {}) {
+    const selectValue = (keys, defaultValue = undefined) => {
+        for (const key of keys) {
+            if (customerRow[key] !== undefined && customerRow[key] !== null) {
+                return customerRow[key];
+            }
+        }
+        return defaultValue;
+    };
+
+    if (Array.isArray(customerRow)) {
+        return {
+            customerID: customerRow[0],
+            customerName: customerRow[1],
+            sex: customerRow[2],
+            dateOfBirth: customerRow[3],
+            dateOfVisit: customerRow[4],
+            loyaltyID: customerRow[5],
+            loyaltyPoints: customerRow[6],
+            membershipType: customerRow[5] || customerRow[6] ? 'loyalty' : 'guest'
+        };
+    }
+
+    const normalized = {
+        customerID: selectValue(['customerID', 'CustomerID', 'CUSTOMERID', 'customerid']),
+        customerName: selectValue(['customerName', 'CustomerName', 'CUSTOMERNAME', 'customername']),
+        sex: selectValue(['sex', 'Sex', 'SEX', 'gender', 'Gender']),
+        dateOfBirth: selectValue(['dateOfBirth', 'DateOfBirth', 'DATEOFBIRTH', 'DOB', 'dob']),
+        dateOfVisit: selectValue(['dateOfVisit', 'DateOfVisit', 'DATEOFVISIT']),
+        loyaltyID: selectValue(['loyaltyID', 'LoyaltyID', 'LOYALTYID']),
+        loyaltyPoints: selectValue(['loyaltyPoints', 'LoyaltyPoints', 'LOYALTYPOINTS', 'Points', 'POINTS'])
+    };
+
+    normalized.membershipType = (selectValue(['membershipType', 'MembershipType', 'MEMBERSHIPTYPE']) || (normalized.loyaltyID !== undefined && normalized.loyaltyID !== null ? 'loyalty' : 'guest'));
+
+    return normalized;
+}
+
+function clearUpdateFormFields() {
+    ['updateCustomerNewName', 'updateCustomerDob', 'updateCustomerSex', 'updateCustomerVisitDate', 'updateCustomerLoyaltyId', 'updateCustomerLoyaltyPoints'].forEach((id) => {
+        const input = document.getElementById(id);
+        if (input) {
+            input.value = '';
+        }
+    });
+
+    const radios = document.querySelectorAll('input[name="updateMembershipType"]');
+    radios.forEach((radio) => {
+        radio.checked = false;
+    });
+}
+
+function setFieldValue(id, value) {
+    const element = document.getElementById(id);
+    if (element) {
+        element.value = value === undefined || value === null ? '' : value;
+    }
+}
+
+function updateMembershipFieldVisibility(type) {
+    const guestFields = document.getElementById('guestUpdateFields');
+    const loyaltyFields = document.getElementById('loyaltyUpdateFields');
+
+    if (guestFields) {
+        guestFields.style.display = type === 'guest' ? 'block' : 'none';
+    }
+    if (loyaltyFields) {
+        loyaltyFields.style.display = type === 'loyalty' ? 'block' : 'none';
+    }
+}
+
+function setMembershipRadio(type) {
+    const radios = document.querySelectorAll('input[name="updateMembershipType"]');
+    let matched = false;
+    radios.forEach((radio) => {
+        if (radio.value === type) {
+            radio.checked = true;
+            matched = true;
+        } else {
+            radio.checked = false;
+        }
+    });
+    updateMembershipFieldVisibility(matched ? type : null);
+}
+
+function setUpdateSelectMessage(message) {
+    const select = document.getElementById('updateCustomerSelect');
+    const detailsElement = document.getElementById('selectedCustomerDetails');
+    const hiddenInput = document.getElementById('updateCustomerId');
+
+    if (!select) {
+        return;
+    }
+
+    select.innerHTML = '';
+    const option = document.createElement('option');
+    option.value = '';
+    option.textContent = message;
+    select.appendChild(option);
+    select.disabled = true;
+
+    if (hiddenInput) {
+        hiddenInput.value = '';
+    }
+    if (detailsElement) {
+        detailsElement.textContent = message;
+    }
+    clearUpdateFormFields();
+    updateMembershipFieldVisibility(null);
+}
+
+function updateCustomerSelectOptions(customers) {
+    const select = document.getElementById('updateCustomerSelect');
+    const detailsElement = document.getElementById('selectedCustomerDetails');
+    const hiddenInput = document.getElementById('updateCustomerId');
+
+    if (!select) {
+        return;
+    }
+
+    updateCustomerCache.clear();
+    select.innerHTML = '';
+
+    if (!Array.isArray(customers) || customers.length === 0) {
+        setUpdateSelectMessage('No customer tuples available. Insert data first.');
+        return;
+    }
+
+    select.disabled = false;
+    const placeholderOption = document.createElement('option');
+    placeholderOption.value = '';
+    placeholderOption.textContent = 'Select a customer...';
+    select.appendChild(placeholderOption);
+
+    customers.forEach((customerRow) => {
+        const normalized = normalizeCustomerProfile(customerRow);
+        if (normalized.customerID === undefined || normalized.customerID === null) {
             return;
         }
 
-        customers.forEach((customerRow) => {
-            const row = tableBody.insertRow();
-            const values = Array.isArray(customerRow) ? customerRow : Object.values(customerRow);
-            values.forEach((field, index) => {
-                const cell = row.insertCell(index);
-                cell.textContent = field;
-            });
-        });
-    } catch (error) {
-        const row = tableBody.insertRow();
-        const cell = row.insertCell(0);
-        cell.colSpan = 4;
-        cell.textContent = 'Unable to load customers.';
+        const idString = String(normalized.customerID);
+        updateCustomerCache.set(idString, normalized);
+
+        const option = document.createElement('option');
+        option.value = idString;
+        const displayName = normalized.customerName || 'Unnamed';
+        const badge = normalized.membershipType === 'loyalty' ? 'Loyalty' : 'Guest';
+        option.textContent = `#${idString} - ${displayName} (${badge})`;
+        select.appendChild(option);
+    });
+
+    if (hiddenInput) {
+        hiddenInput.value = '';
     }
+    if (detailsElement) {
+        detailsElement.textContent = 'Select a customer to view their current details.';
+    }
+    clearUpdateFormFields();
+    updateMembershipFieldVisibility(null);
+}
+
+async function loadCustomerProfilesForUpdate() {
+    const select = document.getElementById('updateCustomerSelect');
+
+    if (select) {
+        select.disabled = true;
+        select.innerHTML = '';
+        const loadingOption = document.createElement('option');
+        loadingOption.value = '';
+        loadingOption.textContent = 'Loading customers...';
+        select.appendChild(loadingOption);
+    }
+
+    try {
+        const response = await fetch('/customers/profiles');
+        const data = await response.json();
+        if (response.ok && data.success) {
+            customerProfilesCache = data.data || [];
+            renderCustomerTable(customerProfilesCache);
+            updateCustomerSelectOptions(customerProfilesCache);
+        } else {
+            customerProfilesCache = [];
+            renderCustomerTable([]);
+            if (select) {
+                setUpdateSelectMessage(data.message || 'Unable to load customer tuples.');
+            }
+        }
+    } catch (error) {
+        customerProfilesCache = [];
+        renderCustomerTable([]);
+        if (select) {
+            setUpdateSelectMessage('Error loading customer tuples.');
+        }
+    }
+}
+
+function handleCustomerSelectionChange() {
+    const select = document.getElementById('updateCustomerSelect');
+    const hiddenInput = document.getElementById('updateCustomerId');
+    const detailsElement = document.getElementById('selectedCustomerDetails');
+
+    if (!select) {
+        return;
+    }
+
+    const selectedId = select.value;
+    if (hiddenInput) {
+        hiddenInput.value = selectedId || '';
+    }
+
+    if (!selectedId) {
+        if (detailsElement) {
+            detailsElement.textContent = 'Select a customer to view their current details.';
+        }
+        clearUpdateFormFields();
+        updateMembershipFieldVisibility(null);
+        return;
+    }
+
+    const customer = updateCustomerCache.get(selectedId);
+    if (!customer) {
+        if (detailsElement) {
+            detailsElement.textContent = `Selected CustomerID: ${selectedId}`;
+        }
+        clearUpdateFormFields();
+        updateMembershipFieldVisibility(null);
+        return;
+    }
+
+    setFieldValue('updateCustomerNewName', customer.customerName || '');
+    setFieldValue('updateCustomerDob', customer.dateOfBirth || '');
+    setFieldValue('updateCustomerSex', customer.sex || '');
+
+    const membershipType = customer.membershipType === 'loyalty' ? 'loyalty' : 'guest';
+    setMembershipRadio(membershipType);
+
+    if (membershipType === 'guest') {
+        setFieldValue('updateCustomerVisitDate', customer.dateOfVisit || '');
+        setFieldValue('updateCustomerLoyaltyId', '');
+        setFieldValue('updateCustomerLoyaltyPoints', '');
+    } else {
+        setFieldValue('updateCustomerVisitDate', '');
+        setFieldValue('updateCustomerLoyaltyId', customer.loyaltyID);
+        setFieldValue('updateCustomerLoyaltyPoints', customer.loyaltyPoints !== undefined && customer.loyaltyPoints !== null ? customer.loyaltyPoints : '');
+    }
+
+    if (detailsElement) {
+        const nameLabel = customer.customerName || 'Unnamed';
+        const sexLabel = customer.sex || 'Unknown sex';
+        const dobLabel = customer.dateOfBirth || 'Unknown DOB';
+        const typeLabel = membershipType === 'loyalty' ? 'Loyalty Member' : 'Guest';
+        detailsElement.textContent = `Selected tuple: #${selectedId} - ${nameLabel} (${typeLabel}, ${sexLabel}, DOB: ${dobLabel})`;
+    }
+}
+
+function handleMembershipTypeChange(event) {
+    if (!event || !event.target) {
+        return;
+    }
+    updateMembershipFieldVisibility(event.target.value);
 }
 
 // Fetches data from the Guest table and displays visit history.
@@ -254,36 +569,85 @@ async function insertCustomer(event) {
     }
 }
 
-// Updates Customer names based on CustomerID.
+// Updates Customer details (all non-key attributes).
 async function updateCustomerName(event) {
     event.preventDefault();
 
     const customerIDValue = document.getElementById('updateCustomerId').value;
-    const customerNameValue = document.getElementById('updateCustomerNewName').value;
     const messageElement = document.getElementById('updateNameResultMsg');
 
-    const customerID = Number(customerIDValue);
-    const customerName = customerNameValue.trim();
+    if (!customerIDValue) {
+        messageElement.textContent = 'Please select a customer tuple before updating.';
+        return;
+    }
 
-    if (!customerID || Number.isNaN(customerID) || !customerName) {
-        messageElement.textContent = 'Customer ID and new name are required.';
+    const payload = {};
+    const newName = document.getElementById('updateCustomerNewName').value.trim();
+    const newDob = document.getElementById('updateCustomerDob').value;
+    const newSex = document.getElementById('updateCustomerSex').value.trim();
+    const visitDate = document.getElementById('updateCustomerVisitDate').value;
+    const loyaltyIdValue = document.getElementById('updateCustomerLoyaltyId').value.trim();
+    const loyaltyPointsValue = document.getElementById('updateCustomerLoyaltyPoints').value;
+    const membershipRadio = document.querySelector('input[name="updateMembershipType"]:checked');
+    const cachedProfile = updateCustomerCache.get(customerIDValue);
+
+    if (newName) {
+        payload.customerName = newName;
+    }
+    if (newDob) {
+        payload.dateOfBirth = newDob;
+    }
+    if (newSex) {
+        payload.sex = newSex;
+    }
+
+    if (membershipRadio) {
+        payload.membershipType = membershipRadio.value;
+        if (membershipRadio.value === 'guest') {
+            if (visitDate) {
+                payload.dateOfVisit = visitDate;
+            } else if (cachedProfile && cachedProfile.membershipType !== 'guest') {
+                messageElement.textContent = 'Provide a visit date when converting a loyalty member to a guest.';
+                return;
+            }
+        } else if (membershipRadio.value === 'loyalty') {
+            if (!loyaltyIdValue) {
+                messageElement.textContent = 'Provide a Loyalty ID for loyalty members.';
+                return;
+            }
+            payload.loyaltyID = loyaltyIdValue;
+            if (loyaltyPointsValue !== '') {
+                const parsedPoints = Number(loyaltyPointsValue);
+                if (Number.isNaN(parsedPoints) || parsedPoints < 0) {
+                    messageElement.textContent = 'Points must be a non-negative number.';
+                    return;
+                }
+                payload.loyaltyPoints = parsedPoints;
+            }
+        }
+    } else if (visitDate || loyaltyIdValue || loyaltyPointsValue) {
+        messageElement.textContent = 'Select a membership type to apply these changes.';
+        return;
+    }
+
+    if (!Object.keys(payload).length) {
+        messageElement.textContent = 'Enter at least one field to update.';
         return;
     }
 
     try {
-        const response = await fetch(`/customers/${customerID}`, {
+        const response = await fetch(`/customers/${customerIDValue}`, {
             method: 'PATCH',
             headers: {
                 'Content-Type': 'application/json'
             },
-            body: JSON.stringify({ customerName })
+            body: JSON.stringify(payload)
         });
 
         const responseData = await response.json();
 
         if (response.ok && responseData.success) {
             messageElement.textContent = 'Customer updated successfully!';
-            event.target.reset();
             refreshCustomers();
         } else {
             messageElement.textContent = responseData.message || 'Error updating customer!';
@@ -322,6 +686,7 @@ async function countCustomers() {
 window.onload = function() {
     checkDbConnection();
     refreshCustomers();
+    syncProjectionCheckboxes();
 
     const resetButton = document.getElementById('resetSchemaButton');
     if (resetButton) {
@@ -348,6 +713,21 @@ window.onload = function() {
         updateForm.addEventListener('submit', updateCustomerName);
     }
 
+    const updateCustomerSelect = document.getElementById('updateCustomerSelect');
+    if (updateCustomerSelect) {
+        updateCustomerSelect.addEventListener('change', handleCustomerSelectionChange);
+    }
+
+    const membershipRadios = document.querySelectorAll('input[name="updateMembershipType"]');
+    membershipRadios.forEach((radio) => {
+        radio.addEventListener('change', handleMembershipTypeChange);
+    });
+
+    const projectionForm = document.getElementById('customerProjectionForm');
+    if (projectionForm) {
+        projectionForm.addEventListener('submit', handleCustomerProjectionSubmit);
+    }
+
     const countButton = document.getElementById('countCustomersButton');
     if (countButton) {
         countButton.addEventListener('click', countCustomers);
@@ -356,7 +736,6 @@ window.onload = function() {
 
 // General function to refresh the displayed table data. 
 // You can invoke this after any table-modifying operation to keep consistency.
-function refreshCustomers() {
-    fetchAndDisplayCustomers();
-    fetchAndDisplayGuestVisits();
+async function refreshCustomers() {
+    await Promise.all([loadCustomerProfilesForUpdate(), fetchAndDisplayGuestVisits()]);
 }
