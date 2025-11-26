@@ -24,30 +24,25 @@
 
     <br><hr><br> <!-- ========================================================================= -->
 
-    <!-- Show 'Demotable'. 
+    <!-- Show Customer table (matches Customer relation in createtables.sql). 
         Data will be fetched and inserted here dynamically using JavaScript. -->
-    <h2>Show Demotable</h2>
-    <table id="demotable" border="1">
+    <h2>Show Customers</h2>
+    <table id="customersTable" border="1">
         <thead>
-            <tr>
-                <!--Table head, need to be adjusted accordingly to align with your own.-->
-                <th>ID</th>
-                <th>Name</th>
-            </tr>
+            <tr></tr>
         </thead>
         <tbody>
         </tbody>
     </table>
 
-    <!-- Copy Show 'Demotable'. 
-        Data will be fetched and inserted here dynamically using JavaScript. -->
-        <h2> Copy Show Demotable</h2>
-        <table id="demotable" border="1">
+    <!-- Placeholder for another relation view (e.g., Guest or LoyaltyMember). -->
+        <h2>Show Guest Visits</h2>
+        <table id="guestVisitsTable" border="1">
             <thead>
                 <tr>
-                    <!--Table head, need to be adjusted accordingly to align with your own.-->
-                    <th>ID</th>
+                    <th>Customer ID</th>
                     <th>Name</th>
+                    <th>Date of Visit</th>
                 </tr>
             </thead>
             <tbody>
@@ -56,18 +51,28 @@
 
     <br><hr><br> <!-- ========================================================================= -->
 
-    <h2>Reset Demotable</h2>
-    <p>If you wish to reset the table press on the reset button. If this is the first time you're running this page, you MUST use reset</p>
-    <button id="resetDemotable"> reset </button> <br>
+    <h2>Schema Utilities</h2>
+    <p>
+        Use the following buttons to manage your schema:
+        <ul>
+            <li><strong>Reset</strong>: Drops tables, recreates them, and seeds with sample data.</li>
+            <li><strong>Drop &amp; Create</strong>: Drops all tables and recreates empty tables.</li>
+            <li><strong>Populate</strong>: Inserts sample data into existing tables.</li>
+        </ul>
+    </p>
+    <button id="resetSchemaButton">Reset (Drop + Create + Populate)</button>
+    <button id="dropCreateButton">Drop &amp; Create Tables</button>
+    <button id="populateButton">Populate Seed Data</button>
+    <br>
     <!-- A placeholder to display messages related to the reset operation. -->
     <div id="resetResultMsg"></div>
 
     <br><hr><br> <!-- ========================================================================= -->
 
     <h2>Query 1: INSERT Values into Customer </h2>
-    <form id="insertDemotable">
-        CustomerID: <input type="number" id="insertId" placeholder="Enter ID" required> <br><br>
-        CustomerName: <input type="text" id="insertName" placeholder="Enter Name" maxlength="20"> <br><br>
+    <form id="insertCustomerForm">
+        CustomerID: <input type="number" id="insertCustomerId" placeholder="Enter ID" required> <br><br>
+        CustomerName: <input type="text" id="insertCustomerName" placeholder="Enter Name" maxlength="255"> <br><br>
         Date of Birth: <input type="date" id="insertDOB" placeholder="Enter Date of Birth" maxlength="20"> <br><br>
         Gender/Sex: <input type="text" id="insertSex" placeholder="Enter Sex" maxlength="20"> <br><br>
         <p>Customers are either Guests or Loyalty Members (not both). <b>Please only enter the data specific to your instance</b></p>
@@ -76,8 +81,8 @@
         Date of Visit: <input type="date" id="insertVisitDate" placeholder="Enter Date of Visit" maxlength="20"> <br><br>
 
         <p><b>Loyalty Member:</b></p>
-        LoyaltyID: <input type="text" id="insertName" placeholder="Enter Loyalty ID" maxlength="20"> <br><br>
-        Points: <input type="number" id="insertName" placeholder="Enter Points" maxlength="20"> <br><br> 
+        LoyaltyID: <input type="text" id="insertLoyaltyId" placeholder="Enter Loyalty ID" maxlength="20"> <br><br>
+        Points: <input type="number" id="insertPoints" placeholder="Enter Points" maxlength="20"> <br><br> 
         <!--Do we want to let this be entered, or just initialize to zero? -->
         <b><em>Do we want to let this be entered, or just initialize to zero?</em></b>
 
@@ -89,7 +94,7 @@
     <br><hr><br> <!-- ========================================================================= -->
 
     <h2>Query 2: UPDATE Values in Loyalty Member </h2>
-    <form id="insertDemotable">
+    <form id="updateLoyaltyMemberForm">
         <p><b><em>Supposed to display available Customers/Loyalty members so that user can select</em></b></p>
 <!--Supposed to display available Customers/Loyalty members so that user can select -->
         Update values for Loyalty Member with CustomerID: <input type="number" id="insertId" placeholder="Enter ID" required> <br><br>
@@ -112,7 +117,7 @@
     <br><hr><br> <!-- ========================================================================= -->
 
     <h2>Query 3: DELETE Values in Loyalty Member </h2>
-    <form id="insertDemotable">
+    <form id="deleteLoyaltyMemberForm">
 <!--Supposed to display available Customers/Loyalty members so that user can select -->
         Delete Entry for Customer with CustomerID: <input type="number" id="insertId" placeholder="Enter ID" required> <br><br>
 
@@ -123,6 +128,7 @@
     <br><hr><br> <!-- ========================================================================= -->
 
     <h2>Query 4: Selection in Customer </h2>
+    <form id="customerSelectionForm">
     <div id="ruleContainer">
         <div class="rule">
             <select class="customerAttr">
@@ -222,15 +228,15 @@
     <br><hr><br> <!-- ========================================================================= -->
 
     <h2>Query 5: Projection on Customer </h2>
-    <form id="insertDemotable">
+    <form id="customerProjectionForm">
         <p>Check the boxes next to the attributes you would like to view from all Customers</p>
-        <label for="customerIdCheckbox">CustomerID</label><input type="checkbox" id="customerIdCheckbox" name="customerIdCheckbox"><br><br>
+        <label for="customerIdCheckbox">CustomerID</label><input type="checkbox" id="customerIdCheckbox" name="customerIdCheckbox" checked><br><br>
 
-       <label for="customerNameCheckbox">Customer Name</label><input type="checkbox" id="customerNameCheckbox" name="customerNameCheckbox"> <br><br> 
+       <label for="customerNameCheckbox">Customer Name</label><input type="checkbox" id="customerNameCheckbox" name="customerNameCheckbox" checked> <br><br> 
 
-       <label for="sexCheckbox">Sex</label> <input type="checkbox" id="sexCheckbox" name="sexCheckbox"><br><br>
+       <label for="sexCheckbox">Sex</label> <input type="checkbox" id="sexCheckbox" name="sexCheckbox" checked><br><br>
 
-       <label for="dobCheckbox">Date of Birth</label><input type="checkbox" id="dobCheckbox" name="dobCheckbox"><br><br>
+       <label for="dobCheckbox">Date of Birth</label><input type="checkbox" id="dobCheckbox" name="dobCheckbox" checked><br><br>
 
         <label for="dateofvisitcheckbox">Date of Visit</label><input type="checkbox" id="dateofvisitcheckbox" name="dateofvisitcheckbox"><br><br>
 
@@ -245,7 +251,7 @@
     <br><hr><br> <!-- ========================================================================= -->
 
     <h2>Query 6: Join: Find all the Names and Customer Statuses (Guest or LoyaltyMember) of customers that have or have had tickets for a user specified ride.  </h2>
-    <form id="insertDemotable">
+    <form id="customerRideJoinForm">
         Find all the Names and Customer Statuses of customers that have or have had tickets for the ride named: <input type="text" id="insertRideName" placeholder="Enter Ride Name" maxlength="255"> <br><br>
         <p>Customers are either Guests or Loyalty Members (not both)</p>
 
@@ -256,7 +262,7 @@
     <br><hr><br> <!-- ========================================================================= -->
 
     <h2>Query 7: Aggregation with GROUP BY: Average Number of Points Grouped by Gender/Sex </h2>
-    <form id="insertDemotable">
+    <form id="avgPointsByGenderForm">
         <button type="submit">Run query</button><br></br>
     </form>
     <div id="insertResultMsg"></div>
@@ -264,7 +270,7 @@
     <br><hr><br> <!-- ========================================================================= -->
 
     <h2>Query 8: Aggregation with HAVING:  Count number of Guests that visited GROUPED BY Month. </h2>
-    <form id="insertDemotable">
+    <form id="guestVisitsByMonthForm">
         <button type="submit">Run query</button><br></br>
     </form>
     <div id="insertResultMsg"></div>
@@ -272,7 +278,7 @@
     <br><hr><br> <!-- ========================================================================= -->
 
     <h2>Query 9: Nested Aggregation with GROUP BY: Year of Birth with the Minimum Average number of Points grouped by Year of Birth (Which birth year has the lowest average number of points)</h2>
-    <form id="insertDemotable">
+    <form id="minAvgPointsByBirthYearForm">
         <!-- <p>Show data relevant for query button: </p><button type="submit"></button> -->
         <button type="submit">Run query</button><br></br>
         
@@ -283,7 +289,7 @@
     <br><hr><br> <!-- ========================================================================= -->
 
     <h2>Query 10: Division -- Customers that have Rode all Rides </h2>
-    <form id="insertDemotable">
+    <form id="customersAllRidesForm">
         <button type="submit">Run query</button><br></br>
     </form>
     <div id="insertResultMsg"></div>
@@ -291,21 +297,62 @@
 
     <br><hr><br> <!-- ========================================================================= -->
 
-    <h2>Update Name in DemoTable</h2>
-    <p>The values are case sensitive and if you enter in the wrong case, the update statement will not do anything.</p>
-    <form id="updataNameDemotable">
-        Old Name: <input type="text" id="updateOldName" placeholder="Enter Old Name" required> <br><br>
-        New Name: <input type="text" id="updateNewName" placeholder="Enter New Name" maxlength="20"> <br><br>
+    <h2>Update Customer Details</h2>
+    <p>Select a tuple below to edit all non-key attributes. Guest tuples only expose Guest fields, while Loyalty Members expose their loyalty attributes.</p>
+    <form id="updateCustomerNameForm">
+        <label for="updateCustomerSelect">Select Customer Tuple:</label>
+        <select id="updateCustomerSelect" aria-label="Customer tuples for update">
+            <option value="">Loading customers...</option>
+        </select>
+        <div id="selectedCustomerDetails">Select a customer to view their current details.</div>
+        <input type="hidden" id="updateCustomerId">
 
-        <button type="submit"> update </button> <br>
+        <fieldset>
+            <legend>Basic Information</legend>
+            <label for="updateCustomerNewName">Customer Name:</label>
+            <input type="text" id="updateCustomerNewName" placeholder="Enter New Name" maxlength="255"> <br><br>
+
+            <label for="updateCustomerDob">Date of Birth:</label>
+            <input type="date" id="updateCustomerDob"> <br><br>
+
+            <label for="updateCustomerSex">Gender/Sex:</label>
+            <input type="text" id="updateCustomerSex" placeholder="Enter Sex" maxlength="20"> <br><br>
+        </fieldset>
+
+        <fieldset>
+            <legend>Customer Type</legend>
+            <label>
+                <input type="radio" name="updateMembershipType" value="guest"> Guest
+            </label>
+            <label>
+                <input type="radio" name="updateMembershipType" value="loyalty"> Loyalty Member
+            </label>
+        </fieldset>
+
+        <div id="guestUpdateFields" class="membership-fields" style="display: none;">
+            <h4>Guest Details</h4>
+            <label for="updateCustomerVisitDate">Date of Visit:</label>
+            <input type="date" id="updateCustomerVisitDate"> <br><br>
+        </div>
+
+        <div id="loyaltyUpdateFields" class="membership-fields" style="display: none;">
+            <h4>Loyalty Member Details</h4>
+            <label for="updateCustomerLoyaltyId">Loyalty ID:</label>
+            <input type="text" id="updateCustomerLoyaltyId" maxlength="20"> <br><br>
+
+            <label for="updateCustomerLoyaltyPoints">Points:</label>
+            <input type="number" id="updateCustomerLoyaltyPoints" min="0"> <br><br>
+        </div>
+
+        <button type="submit"> Save Changes </button> <br>
     </form>
     <!-- A placeholder to display messages related to the update operation. -->
     <div id="updateNameResultMsg"></div>
 
     <br><hr><br> <!-- ========================================================================= -->
 
-    <h2>Count the Tuples in DemoTable</h2>
-    <button id="countDemotable"> count </button> <br><br>
+    <h2>Count the Tuples in Customer</h2>
+    <button id="countCustomersButton"> count </button> <br><br>
     <!-- A placeholder to display the count result. -->
     <div id="countResultMsg"></div> <br>
 
