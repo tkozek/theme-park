@@ -298,14 +298,14 @@ async function deleteCustomer(customerID) {
     return await withOracleDB(async (connection) => {
 
         // make sure that the customerID is actually numbers
-        const customerIDNumebr = Number(customerID);
+        const customerIDNumber = Number(customerID);
         if (!customerIDNumber || Number.isNaN(customerIDNumber)) {
-            throw new Error('Customer ID which you have provided is not valid! Please use numbers only')
+            throw new Error('Customer ID which you have provided is not valid! Please use numbers only');
         }
 
         // does customerID provided exist?
         const existingCustomer = await connection.execute(
-            'SELECT 1FROM Customer WHERE CustomerID = :customerID',
+            'SELECT 1 FROM Customer WHERE CustomerID = :customerID',
             { customerID: customerIDNumber }
         );
         if (!existingCustomer.rows.length) {
@@ -318,7 +318,7 @@ async function deleteCustomer(customerID) {
                 { customerID: customerIDNumber },
                 { autoCommit: true }
             );
-            return result.rowAffected && result.rowsAffected > 0; // this will reutrn 1 for 1 row deleted if sucessful, otherwise 0
+            return result.rowsAffected && result.rowsAffected > 0; // this will return 1 for 1 row deleted if successful, otherwise 0
         } catch (err) {
             console.error('There was an error deleting the customer!', err);
             throw err;
@@ -327,9 +327,10 @@ async function deleteCustomer(customerID) {
         
         
     }).catch((err) => {
-        if (err && err.message){
-            throw err;  
+        if (err && err.message) {
+            throw err;
         }
+        return false;
     });
 
 }
@@ -565,6 +566,7 @@ module.exports = {
     initiateDemotable, 
     insertCustomer,
     updateCustomerDetails,
+    deleteCustomer,
     updateNameDemotable, 
     countDemotable,
     countCustomers,
