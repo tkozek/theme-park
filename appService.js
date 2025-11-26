@@ -1,7 +1,42 @@
+const fs = require('fs');
+const path = require('path');
 const oracledb = require('oracledb');
 const loadEnvFile = require('./utils/envUtil');
 
 const envVariables = loadEnvFile('./.env');
+
+function readSqlFile(fileName) {
+    const fullPath = path.join(__dirname, fileName);
+    return fs.readFileSync(fullPath, 'utf8');
+}
+
+const DROP_ALL_SQL = readSqlFile('dropall.sql');
+const CREATE_TABLES_SQL = readSqlFile('createtables.sql');
+const INSERT_VALUES_SQL = readSqlFile('insertvalues.sql');
+
+function splitSqlStatements(script) {
+    const cleaned = script
+        .split('\n')
+        .map((line) => (line.trim().startsWith('--') ? '' : line))
+        .join('\n');
+
+    return cleaned
+        .split(/;\s*(?:\r?\n|$)/)
+        .map((statement) => statement.trim())
+        .filter((statement) => statement.length > 0);
+}
+
+async function executeSqlStatements(connection, script, label = 'SQL script') {
+    const statements = splitSqlStatements(script);
+    for (const statement of statements) {
+        try {
+            await connection.execute(statement);
+        } catch (err) {
+            console.error(`Error executing statement from ${label}:`, statement);
+            throw err;
+        }
+    }
+}
 
 // Database configuration setup. Ensure your .env file has the required database credentials.
 const dbConfig = {
@@ -78,106 +113,80 @@ async function testOracleConnection() {
     });
 }
 
-async function fetchDemotableFromDb() {
+async function fetchCustomers() {
     return await withOracleDB(async (connection) => {
-        const result = await connection.execute('SELECT * FROM Guest');
+        const result = await connection.execute('SELECT * FROM Customer');
         return result.rows;
     }).catch(() => {
         return [];
     });
 }
 
-async function initiateDemotable() {
+async function fetchGuestVisits() {
     return await withOracleDB(async (connection) => {
-        try {
-            await connection.execute(`
-BEGIN
-  FOR t IN (SELECT table_name FROM user_tables) LOOP
-    EXECUTE IMMEDIATE 'DROP TABLE ' || t.table_name || ' CASCADE CONSTRAINTS';
-  END LOOP;
-END;`);
-        } catch(err) {
-            console.log('Table might not exist, proceeding to create...');
-        }
-
-        const result = await connection.execute(createalltables);
-        return true;
+        const result = await connection.execute(`
+            SELECT g.CustomerID, c.CustomerName, g.DateOfVisit
+            FROM Guest g
+            LEFT JOIN Customer c ON c.CustomerID = g.CustomerID
+            ORDER BY g.DateOfVisit DESC, g.CustomerID
+        `);
+        return result.rows;
     }).catch(() => {
-        return false;
+        return [];
     });
 }
 
-// async function insertDemotable(id, name) {
-//     return await withOracleDB(async (connection) => {
-//         const result = await connection.execute(
-//             `INSERT INTO Guest (id, name) VALUES (:id, :name)`,
-//             [id, name],
-//             { autoCommit: true }
-//         );
-
-//         return result.rowsAffected && result.rowsAffected > 0;
-//     }).catch(() => {
-//         return false;
-//     });
-// }
-
-
-async function insertCustomer(customerID, customerName, dateOfBirth, sex, dateOfVisit, loyaltyID, loyaltyPoints) {
+async function insertCustomer({ customerID, customerName, dateOfBirth, sex, dateOfVisit, loyaltyID, loyaltyPoints }) {
     return await withOracleDB(async (connection) => {
+        if (!customerID || !customerName || !dateOfBirth || !sex) {
+            throw new Error('customerID, customerName, dateOfBirth, and sex are required.');
+        }
 
-        try{
-
-            // insert the data into the customer table!! (customer must be either GUEST or LOYALTYMEMBER)
+        try {
             await connection.execute(
-                `INSERT INTO Customer (CustomerID, CustomerName, DOB, Sex) VALUES (:customerID, :customerName, TO_DATE(:dateOfBirth, 'YYYY-MM-DD'), :sex)`,
-                [customerID, customerName, dateOfBirth, sex],
-                {autoCommit: false}
+                `INSERT INTO Customer (CustomerID, CustomerName, DOB, Sex)
+                 VALUES (:customerID, :customerName, TO_DATE(:dateOfBirth, 'YYYY-MM-DD'), :sex)`,
+                { customerID, customerName, dateOfBirth, sex },
+                { autoCommit: false }
             );
 
-            // if they are a guest, insert into guest table
-            if (dateOfVisit !== undefined && dateOfVisit !== NULL) {
+            if (dateOfVisit) {
                 await connection.execute(
-                    `INSERT INTO Guest (CustomerID, DateOfVisit) VALUES (:customerID, TO_DATE(:dateOfVisit, 'YYYY-MM-DD'))`,
-                    [customerID, dateOfVisit],
-                    {autoCommit: false}
+                    `INSERT INTO Guest (CustomerID, DateOfVisit)
+                     VALUES (:customerID, TO_DATE(:dateOfVisit, 'YYYY-MM-DD'))`,
+                    { customerID, dateOfVisit },
+                    { autoCommit: false }
                 );
             }
 
-
-            //if they are a loyalty member, insert into loyaltymember table
-            else if (loyaltyID !== undefined && loyaltyPoints !== undefined){
-                const uuid = 10000 + Math.floor(Date.now() % 100000); // generating a UUID from the seasonpass table
-
+            if (loyaltyID !== undefined && loyaltyPoints !== undefined) {
+                const uuid = 10000 + Math.floor(Date.now() % 100000);
                 await connection.execute(
-                    `INSERT INTO LoyaltyMember (CustomerID, LoyaltyID, Points, UUID) VALUES (:customerID, :loyaltyID, :loyaltyPoints, :uuid)`,
-                    [customerID, loyaltyID, loyaltyPoints, uuid],
-                    {autoCommit: false }
-
+                    `INSERT INTO LoyaltyMember (CustomerID, LoyaltyID, Points, UUID)
+                     VALUES (:customerID, :loyaltyID, :loyaltyPoints, :uuid)`,
+                    { customerID, loyaltyID, loyaltyPoints, uuid },
+                    { autoCommit: false }
                 );
             }
 
-            // sucess - commit both inserts!!
             await connection.commit();
             return true;
-
         } catch (err) {
             await connection.rollback();
             console.error('Error: Cannot insert that customer!!', err);
             throw err;
         }
-        
-        
     }).catch(() => {
         return false;
     });
 }
 
 
-async function updateNameDemotable(oldName, newName) {
+async function updateCustomerName(customerID, customerName) {
     return await withOracleDB(async (connection) => {
         const result = await connection.execute(
-            `UPDATE DEMOTABLE SET name=:newName where name=:oldName`,
-            [newName, oldName],
+            `UPDATE Customer SET CustomerName = :customerName WHERE CustomerID = :customerID`,
+            { customerName, customerID },
             { autoCommit: true }
         );
 
@@ -187,24 +196,41 @@ async function updateNameDemotable(oldName, newName) {
     });
 }
 
-async function countDemotable() {
+async function countCustomers() {
     return await withOracleDB(async (connection) => {
-        const result = await connection.execute('SELECT Count(*) FROM DEMOTABLE');
+        const result = await connection.execute('SELECT COUNT(*) FROM Customer');
         return result.rows[0][0];
     }).catch(() => {
         return -1;
     });
 }
 
+async function resetDatabase() {
+    return await withOracleDB(async (connection) => {
+        await connection.execute(DROP_ALL_SQL);
+        console.info("Dropped all tables")
+        await executeSqlStatements(connection, CREATE_TABLES_SQL, 'createtables.sql');
+        console.info("created all tables")
+        if (INSERT_VALUES_SQL.trim().length > 0) {
+            await executeSqlStatements(connection, INSERT_VALUES_SQL, 'insertvalues.sql');
+            const customerCount = await connection.execute('SELECT COUNT(*) FROM Customer');
+            console.info('Seeded customers:', customerCount.rows?.[0]?.[0] ?? 0);
+            const guestCount = await connection.execute('SELECT COUNT(*) FROM Guest');
+            console.info('Seeded guest visits:', guestCount.rows?.[0]?.[0] ?? 0);
+        }
+        return true;
+    }).catch((err) => {
+        console.error('Error resetting database:', err);
+        return false;
+    });
+}
+
 module.exports = {
     testOracleConnection,
-    fetchDemotableFromDb,
-    initiateDemotable, 
-    insertDemotable, 
-    updateNameDemotable, 
-    countDemotable
+    fetchCustomers,
+    fetchGuestVisits,
+    insertCustomer,
+    updateCustomerName,
+    countCustomers,
+    resetDatabase
 };
-
-const createalltables = `
-
-`

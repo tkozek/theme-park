@@ -106,7 +106,7 @@ insert into customer values ( 31, 'Jeff Guest II', 'M', to_date('1949-06-17','YY
 insert into customer values ( 32, 'Jeff Guest III', 'M', to_date('1949-10-16','YYYY-MM-DD') );
 insert into customer values ( 33, 'Jeff Guest IV', 'M', to_date('1995-04-30','YYYY-MM-DD') );
 insert into customer values ( 34, 'Jeff Margaret', 'M', to_date('1949-09-30','YYYY-MM-DD') );
-insert into customer values ( 34, 'Tom Margaret', 'M', to_date('1949-09-30','YYYY-MM-DD') );
+insert into customer values ( 35, 'Tom Margaret', 'M', to_date('1949-09-30','YYYY-MM-DD') );
 
 
 
@@ -151,9 +151,9 @@ insert into loyaltymember values ( 101, 113, 1, 10013 );
 -- More loyalty members for points by birth year
 
 -- 1930
-insert into loyaltymember values ( 25, 116, 1, 10012 );
-insert into loyaltymember values ( 26, 117,  3, 10013 );
-insert into loyaltymember values ( 27, 118,  4, 10014 );
+insert into loyaltymember values ( 25, 116, 1, 20001 );
+insert into loyaltymember values ( 26, 117,  3, 20002 );
+insert into loyaltymember values ( 27, 118,  4, 20003 );
 
 -- 1949
 insert into loyaltymember values ( 31, 122, 443, 10018); 
@@ -162,17 +162,22 @@ insert into loyaltymember values ( 34, 125,   355, 10021 );
 insert into loyaltymember values ( 35, 126,  17, 10022 );
 
 -- 1995
-insert into loyaltymember values ( 28, 119,  120, 10015 );
+insert into loyaltymember values ( 28, 119,  120, 20004 );
 insert into loyaltymember values ( 29, 120,  111, 10016 ); 
 insert into loyaltymember values ( 30, 121,  1111, 10017 ); 
 insert into loyaltymember values ( 33, 124,  234, 10020 );
 
 
 insert into booking1 values ( to_date('2025-07-10','YYYY-MM-DD'), 120 );
+insert into booking1 values ( to_date('2025-07-11','YYYY-MM-DD'), 95 );
 insert into booking1 values ( to_date('2025-07-12','YYYY-MM-DD'), 90 );
 insert into booking1 values ( to_date('2025-07-14','YYYY-MM-DD'), 150 );
 insert into booking1 values ( to_date('2025-07-16','YYYY-MM-DD'), 110 );
 insert into booking1 values ( to_date('2025-07-18','YYYY-MM-DD'), 200 );
+insert into booking1 values ( to_date('2025-08-01','YYYY-MM-DD'), 130 );
+insert into booking1 values ( to_date('2025-09-14','YYYY-MM-DD'), 140 );
+insert into booking1 values ( to_date('2025-09-20','YYYY-MM-DD'), 160 );
+insert into booking1 values ( to_date('2025-09-01','YYYY-MM-DD'), 135 );
 
 -- Customer 1 riding all rides (Alice Johnson)
 insert into booking2 values ( 1001, to_date('2025-07-10','YYYY-MM-DD'), 1 );
@@ -184,6 +189,7 @@ insert into booking2 values ( 1115, to_date('2025-07-12','YYYY-MM-DD'), 1 );
 
 
 insert into booking2 values ( 1002, to_date('2025-08-01','YYYY-MM-DD'), 2 );
+insert into booking2 values ( 1003, to_date('2025-09-01','YYYY-MM-DD'), 3 );
 
 --Customer 3 riding every ride (Carol White)
 insert into booking2 values ( 2223, to_date('2025-09-14','YYYY-MM-DD'), 3 );
@@ -201,6 +207,7 @@ insert into booking2 values ( 2323, to_date('2025-07-18','YYYY-MM-DD'), 5 );
 insert into booking2 values ( 2424, to_date('2025-07-18','YYYY-MM-DD'), 5 );
 insert into booking2 values ( 2525, to_date('2025-07-18','YYYY-MM-DD'), 5 );
 insert into booking2 values ( 2626, to_date('2025-07-18','YYYY-MM-DD'), 5 );
+insert into booking2 values ( 2727, to_date('2025-07-18','YYYY-MM-DD'), 5 );
 
 
 
@@ -246,6 +253,11 @@ insert into ticket1 values ( to_date('2025-08-01','YYYY-MM-DD'), 10, to_date('20
 insert into ticket1 values ( to_date('2025-09-01','YYYY-MM-DD'), 6, to_date('2025-09-30','YYYY-MM-DD') );
 insert into ticket1 values ( to_date('2025-10-01','YYYY-MM-DD'), 12, to_date('2025-10-31','YYYY-MM-DD') );
 insert into ticket1 values ( to_date('2025-11-01','YYYY-MM-DD'), 4, to_date('2025-11-30','YYYY-MM-DD') );
+insert into ticket1 values ( to_date('2025-09-14','YYYY-MM-DD'), 8, to_date('2025-09-30','YYYY-MM-DD') );
+insert into ticket1 values ( to_date('2025-07-10','YYYY-MM-DD'), 8, to_date('2025-07-31','YYYY-MM-DD') );
+insert into ticket1 values ( to_date('2025-07-11','YYYY-MM-DD'), 8, to_date('2025-07-31','YYYY-MM-DD') );
+insert into ticket1 values ( to_date('2025-07-12','YYYY-MM-DD'), 8, to_date('2025-07-31','YYYY-MM-DD') );
+insert into ticket1 values ( to_date('2025-09-14','YYYY-MM-DD'), 9, to_date('2025-09-30','YYYY-MM-DD') );
 
 --Customer 1 riding every ride (Alice Johnson)
 insert into ticket2 values ( 5001, 1001, to_date('2025-07-10','YYYY-MM-DD'), 5, 8 );
