@@ -85,6 +85,21 @@ router.patch('/customers/:customerID', async (req, res) => {
     }
 });
 
+router.delete('/customers/:customerID', async (req, res) => {
+    const { customerID } = req.params;
+
+    try {
+        const deleted = await appService.deleteCustomer(customerID);
+        if (deleted) {
+            res.json({ success: true, message: 'Customer deleted sucessfully !' });
+        } else {
+            res.status(HTTP_STATUS.NOT_FOUND).json({ success: false, message: 'Customer not found!' });
+        }
+    } catch (err) {
+        res.status(HTTP_STATUS.BAD_REQUEST).json({ success: false, message: err.message || 'Failed to delete the customer' });
+    }
+});
+
 router.get('/customers/count', async (req, res) => {
     try {
         const count = await appService.countCustomers();
