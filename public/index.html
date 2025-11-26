@@ -29,12 +29,7 @@
     <h3>Show Customers</h3>
     <table id="customersTable" border="1">
         <thead>
-            <tr>
-                <th>Customer ID</th>
-                <th>Name</th>
-                <th>Sex</th>
-                <th>Date of Birth</th>
-            </tr>
+            <tr></tr>
         </thead>
         <tbody>
         </tbody>
@@ -56,9 +51,19 @@
 
     <hr> <!-- ========================================================================= -->
 
-    <h3>Reset Schema (Drop & Recreate Tables)</h3>
-    <p>Runs the scripts (<code>dropall.sql</code>, <code>createtables.sql</code>, and <code>insertvalues.sql</code>) to rebuild the schema and seed data. Run this if you need a clean database.</p>
-    <button id="resetSchemaButton"> reset </button> <br>
+    <h2>Schema Utilities</h2>
+    <p>
+        Use the following buttons to manage your schema:
+        <ul>
+            <li><strong>Reset</strong>: Drops tables, recreates them, and seeds with sample data.</li>
+            <li><strong>Drop &amp; Create</strong>: Drops all tables and recreates empty tables.</li>
+            <li><strong>Populate</strong>: Inserts sample data into existing tables.</li>
+        </ul>
+    </p>
+    <button id="resetSchemaButton">Reset (Drop + Create + Populate)</button>
+    <button id="dropCreateButton">Drop &amp; Create Tables</button>
+    <button id="populateButton">Populate Seed Data</button>
+    <br>
     <!-- A placeholder to display messages related to the reset operation. -->
     <div id="resetResultMsg"></div>
 
@@ -325,11 +330,54 @@
 
     <h3>Update Customer Name</h3>
     <p>Provide the CustomerID whose name you want to change, along with the new value.</p>
+    <h2>Update Customer Details</h2>
+    <p>Select a tuple below to edit all non-key attributes. Guest tuples only expose Guest fields, while Loyalty Members expose their loyalty attributes.</p>
     <form id="updateCustomerNameForm">
-        CustomerID: <input type="number" id="updateCustomerId" placeholder="Enter Customer ID" required> <br><br>
-        New Name: <input type="text" id="updateCustomerNewName" placeholder="Enter New Name" maxlength="255"> <br><br>
+        <label for="updateCustomerSelect">Select Customer Tuple:</label>
+        <select id="updateCustomerSelect" aria-label="Customer tuples for update">
+            <option value="">Loading customers...</option>
+        </select>
+        <div id="selectedCustomerDetails">Select a customer to view their current details.</div>
+        <input type="hidden" id="updateCustomerId">
 
-        <button type="submit"> update </button> <br>
+        <fieldset>
+            <legend>Basic Information</legend>
+            <label for="updateCustomerNewName">Customer Name:</label>
+            <input type="text" id="updateCustomerNewName" placeholder="Enter New Name" maxlength="255"> <br><br>
+
+            <label for="updateCustomerDob">Date of Birth:</label>
+            <input type="date" id="updateCustomerDob"> <br><br>
+
+            <label for="updateCustomerSex">Gender/Sex:</label>
+            <input type="text" id="updateCustomerSex" placeholder="Enter Sex" maxlength="20"> <br><br>
+        </fieldset>
+
+        <fieldset>
+            <legend>Customer Type</legend>
+            <label>
+                <input type="radio" name="updateMembershipType" value="guest"> Guest
+            </label>
+            <label>
+                <input type="radio" name="updateMembershipType" value="loyalty"> Loyalty Member
+            </label>
+        </fieldset>
+
+        <div id="guestUpdateFields" class="membership-fields" style="display: none;">
+            <h4>Guest Details</h4>
+            <label for="updateCustomerVisitDate">Date of Visit:</label>
+            <input type="date" id="updateCustomerVisitDate"> <br><br>
+        </div>
+
+        <div id="loyaltyUpdateFields" class="membership-fields" style="display: none;">
+            <h4>Loyalty Member Details</h4>
+            <label for="updateCustomerLoyaltyId">Loyalty ID:</label>
+            <input type="text" id="updateCustomerLoyaltyId" maxlength="20"> <br><br>
+
+            <label for="updateCustomerLoyaltyPoints">Points:</label>
+            <input type="number" id="updateCustomerLoyaltyPoints" min="0"> <br><br>
+        </div>
+
+        <button type="submit"> Save Changes </button> <br>
     </form>
     <!-- A placeholder to display messages related to the update operation. -->
     <div id="updateNameResultMsg"></div>

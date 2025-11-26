@@ -32,6 +32,15 @@ router.get('/customers', async (req, res) => {
     }
 });
 
+router.get('/customers/profiles', async (req, res) => {
+    try {
+        const profiles = await appService.fetchCustomerProfiles();
+        res.json({ success: true, data: profiles });
+    } catch (err) {
+        res.status(HTTP_STATUS.SERVER_ERROR).json({ success: false, message: 'Failed to fetch customer profiles.', error: err.message });
+    }
+});
+
 router.get('/guests', async (req, res) => {
     try {
         const guests = await appService.fetchGuestVisits();
@@ -58,21 +67,21 @@ router.post('/customers', async (req, res) => {
 
 router.patch('/customers/:customerID', async (req, res) => {
     const { customerID } = req.params;
-    const { customerName } = req.body;
+    const updates = req.body || {};
 
-    if (!customerName) {
-        return res.status(HTTP_STATUS.BAD_REQUEST).json({ success: false, message: 'customerName is required.' });
+    if (!updates || Object.keys(updates).length === 0) {
+        return res.status(HTTP_STATUS.BAD_REQUEST).json({ success: false, message: 'At least one field is required.' });
     }
 
     try {
-        const updated = await appService.updateCustomerName(customerID, customerName);
+        const updated = await appService.updateCustomerDetails(customerID, updates);
         if (updated) {
             res.json({ success: true, message: 'Customer updated.' });
         } else {
             res.status(HTTP_STATUS.NOT_FOUND).json({ success: false, message: 'Customer not found.' });
         }
     } catch (err) {
-        res.status(HTTP_STATUS.SERVER_ERROR).json({ success: false, message: 'Failed to update customer.', error: err.message });
+        res.status(HTTP_STATUS.BAD_REQUEST).json({ success: false, message: err.message || 'Failed to update customer.' });
     }
 });
 
@@ -99,6 +108,32 @@ router.post('/reset', async (req, res) => {
         }
     } catch (err) {
         res.status(HTTP_STATUS.SERVER_ERROR).json({ success: false, message: 'Failed to drop database objects.', error: err.message });
+    }
+});
+
+router.post('/drop-and-create', async (req, res) => {
+    try {
+        const success = await appService.dropAndCreateTables();
+        if (success) {
+            res.json({ success: true, message: 'Tables dropped and recreated.' });
+        } else {
+            res.status(HTTP_STATUS.SERVER_ERROR).json({ success: false, message: 'Failed to drop/create tables.' });
+        }
+    } catch (err) {
+        res.status(HTTP_STATUS.SERVER_ERROR).json({ success: false, message: 'Failed to drop/create tables.', error: err.message });
+    }
+});
+
+router.post('/populate', async (req, res) => {
+    try {
+        const success = await appService.populateSeedData();
+        if (success) {
+            res.json({ success: true, message: 'Seed data inserted.' });
+        } else {
+            res.status(HTTP_STATUS.SERVER_ERROR).json({ success: false, message: 'Failed to insert seed data.' });
+        }
+    } catch (err) {
+        res.status(HTTP_STATUS.SERVER_ERROR).json({ success: false, message: 'Failed to insert seed data.', error: err.message });
     }
 });
 
