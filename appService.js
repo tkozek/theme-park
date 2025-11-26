@@ -122,34 +122,34 @@ END;`);
 // }
 
 
-async function insertCustomer(customerID, customerName, dateOfBirth, gender, dateOfVisit, loyaltyID, loyaltyPoints) {
+async function insertCustomer(customerID, customerName, dateOfBirth, sex, dateOfVisit, loyaltyID, loyaltyPoints) {
     return await withOracleDB(async (connection) => {
 
         try{
 
             // insert the data into the customer table!! (customer must be either GUEST or LOYALTYMEMBER)
             await connection.execute(
-                `INSERT INTO Customer (customerID, customerName, dateOfBirth, gender) VALUES (:customerID, :customerName, :TO_DATE(:dateOfBirth, 'YYYY-MM-DD'), gender)`,
-                [customerID, dateOfVisit],
-                {autocommit: false}
+                `INSERT INTO Customer (CustomerID, CustomerName, DOB, Sex) VALUES (:customerID, :customerName, TO_DATE(:dateOfBirth, 'YYYY-MM-DD'), :sex)`,
+                [customerID, customerName, dateOfBirth, sex],
+                {autoCommit: false}
             );
 
             // if they are a guest, insert into guest table
-            if (isGuest && dateOfVisit) {
+            if (dateOfVisit !== undefined && dateOfVisit !== NULL) {
                 await connection.execute(
-                    `INSERT INTO Guest (customerID, dateOfVisit) VALUES (:customerID, TO_DATE(:dateOfVisit, 'YYYY-MM-DD')),))`,
-                    [customerID, dateofVisit],
+                    `INSERT INTO Guest (CustomerID, DateOfVisit) VALUES (:customerID, TO_DATE(:dateOfVisit, 'YYYY-MM-DD'))`,
+                    [customerID, dateOfVisit],
                     {autoCommit: false}
-                )
+                );
             }
 
 
             //if they are a loyalty member, insert into loyaltymember table
-            else if (!isGuest && loyaltyID !== undefined && points !== undefined){
+            else if (loyaltyID !== undefined && loyaltyPoints !== undefined){
                 const uuid = 10000 + Math.floor(Date.now() % 100000); // generating a UUID from the seasonpass table
 
                 await connection.execute(
-                    `INSERT INTO LoyaltyMember (customerID, loyaltyID, loyaltyPoints, UUID) VALUES (:customerID, :loyaltyID, :loyaltyPoints, :uuid)`,
+                    `INSERT INTO LoyaltyMember (CustomerID, LoyaltyID, Points, UUID) VALUES (:customerID, :loyaltyID, :loyaltyPoints, :uuid)`,
                     [customerID, loyaltyID, loyaltyPoints, uuid],
                     {autoCommit: false }
 
