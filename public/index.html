@@ -22,11 +22,11 @@
         <img id="loadingGif" class="loading-gif" src="loading_100px.gif" alt="Loading...">
     </h1>
 
-    <br><hr><br> <!-- ========================================================================= -->
+    <hr><br> <!-- ========================================================================= -->
 
     <!-- Show Customer table (matches Customer relation in createtables.sql). 
         Data will be fetched and inserted here dynamically using JavaScript. -->
-    <h2>Show Customers</h2>
+    <h3>Show Customers</h3>
     <table id="customersTable" border="1">
         <thead>
             <tr></tr>
@@ -36,7 +36,7 @@
     </table>
 
     <!-- Placeholder for another relation view (e.g., Guest or LoyaltyMember). -->
-        <h2>Show Guest Visits</h2>
+        <h3>Show Guest Visits</h3>
         <table id="guestVisitsTable" border="1">
             <thead>
                 <tr>
@@ -49,7 +49,7 @@
             </tbody>
         </table>
 
-    <br><hr><br> <!-- ========================================================================= -->
+    <hr> <!-- ========================================================================= -->
 
     <h2>Schema Utilities</h2>
     <p>
@@ -67,67 +67,88 @@
     <!-- A placeholder to display messages related to the reset operation. -->
     <div id="resetResultMsg"></div>
 
-    <br><hr><br> <!-- ========================================================================= -->
+    <hr> <!-- ========================================================================= -->
 
-    <h2>Query 1: INSERT Values into Customer </h2>
-    <form id="insertCustomerForm">
-        CustomerID: <input type="number" id="insertCustomerId" placeholder="Enter ID" required> <br><br>
-        CustomerName: <input type="text" id="insertCustomerName" placeholder="Enter Name" maxlength="255"> <br><br>
-        Date of Birth: <input type="date" id="insertDOB" placeholder="Enter Date of Birth" maxlength="20"> <br><br>
-        Gender/Sex: <input type="text" id="insertSex" placeholder="Enter Sex" maxlength="20"> <br><br>
-        <p>Customers are either Guests or Loyalty Members (not both). <b>Please only enter the data specific to your instance</b></p>
+    <div id="nav">
+        <button data-show="q1">Query 1</button>
+        <button data-show="q2">Query 2</button>
+        <button data-show="q3">Query 3</button>
+        <button data-show="q4">Query 4</button>
+        <button data-show="q5">Query 5</button>
+        <button data-show="q6">Query 6</button>
+        <button data-show="q7">Query 7</button>
+        <button data-show="q8">Query 8</button>
+        <button data-show="q9">Query 9</button>
+        <button data-show="q10">Query 10</button>
+    </div>
+    <h3>Query 1: INSERT Values into Customer </h3>
+    <div id="q1" class = "page">
+        <form id="insertCustomerForm">
+            CustomerID: <input type="number" id="insertCustomerId" placeholder="Enter ID" required> <br><br>
+            CustomerName: <input type="text" id="insertCustomerName" placeholder="Enter Name" maxlength="255"> <br><br>
+            Date of Birth: <input type="date" id="insertDOB" placeholder="Enter Date of Birth" maxlength="20"> <br><br>
+            Gender/Sex: <input type="text" id="insertSex" placeholder="Enter Sex" maxlength="20"> <br><br>
+            <p>Customers are either Guests or Loyalty Members (not both). <b>Please only enter the data specific to your instance</b></p>
 
-        <p><b>Guest:</b></p>
-        Date of Visit: <input type="date" id="insertVisitDate" placeholder="Enter Date of Visit" maxlength="20"> <br><br>
+            <p><b>Guest:</b></p>
+            Date of Visit: <input type="date" id="insertVisitDate" placeholder="Enter Date of Visit" maxlength="20"> <br><br>
 
-        <p><b>Loyalty Member:</b></p>
-        LoyaltyID: <input type="text" id="insertLoyaltyId" placeholder="Enter Loyalty ID" maxlength="20"> <br><br>
-        Points: <input type="number" id="insertPoints" placeholder="Enter Points" maxlength="20"> <br><br> 
-        <!--Do we want to let this be entered, or just initialize to zero? -->
-        <b><em>Do we want to let this be entered, or just initialize to zero?</em></b>
+            <p><b>Loyalty Member:</b></p>
+            LoyaltyID: <input type="text" id="insertLoyaltyId" placeholder="Enter Loyalty ID" maxlength="20"> <br><br>
+            Points: <input type="number" id="insertPoints" placeholder="Enter Points" maxlength="20"> <br><br> 
+            <!--Do we want to let this be entered, or just initialize to zero? -->
+            <b><em>Do we want to let this be entered, or just initialize to zero?</em></b>
 
-        <button type="submit"> insert </button> <br>
-    </form>
+            <button type="submit"> insert </button> <br>
+        </form>
+    </div>
     <div id="insertResultMsg"></div>
 
 
-    <br><hr><br> <!-- ========================================================================= -->
+    <hr> <!-- ========================================================================= -->
 
-    <h2>Query 2: UPDATE Values in Loyalty Member </h2>
-    <form id="updateLoyaltyMemberForm">
-        <p><b><em>Supposed to display available Customers/Loyalty members so that user can select</em></b></p>
-<!--Supposed to display available Customers/Loyalty members so that user can select -->
-        Update values for Loyalty Member with CustomerID: <input type="number" id="insertId" placeholder="Enter ID" required> <br><br>
-        Change CustomerName: <input type="text" id="insertName" placeholder="Enter Name" maxlength="20"> <br><br>
-        Change Date of Birth: <input type="date" id="insertDOB" placeholder="Enter Date of Birth" maxlength="20"> <br><br>
-        Change Gender/Sex: <input type="text" id="insertSex" placeholder="Enter Sex" maxlength="20"> <br><br>
-        <p>Customers are either Guests or Loyalty Members (not both). <b>Please only enter the data specific to your instance</b></p>
+    <h3>Query 2: UPDATE Values in Loyalty Member </h3>
+    <div id="q2" class = "page">
+        <form id="updateLoyaltyMemberForm">
+            <p><b><em>Supposed to display available Customers/Loyalty members so that user can select</em></b></p>
+    <!--Supposed to display available Customers/Loyalty members so that user can select -->
+            Update values for Loyalty Member with CustomerID: <input type="number" id="insertId" placeholder="Enter ID" required> <br><br>
+            Change CustomerName: <input type="text" id="insertName" placeholder="Enter Name" maxlength="20"> <br><br>
+            Change Date of Birth: <input type="date" id="insertDOB" placeholder="Enter Date of Birth" maxlength="20"> <br><br>
+            Change Gender/Sex: <input type="text" id="insertSex" placeholder="Enter Sex" maxlength="20"> <br><br>
+            <p>Customers are either Guests or Loyalty Members (not both). <b>Please only enter the data specific to your instance</b></p>
 
-        <p><b>Guest:</b></p>
-        Date of Visit: <input type="date" id="insertVisitDate" placeholder="Enter Date of Visit" maxlength="20"> <br><br>
+            <p><b>Guest:</b></p>
+            Date of Visit: <input type="date" id="insertVisitDate" placeholder="Enter Date of Visit" maxlength="20"> <br><br>
 
-        <p><b>Loyalty Member:</b></p>
-        LoyaltyID: <input type="text" id="insertName" placeholder="Enter Loyalty ID" maxlength="20"> <br><br>
-        How many points to add: <input type="number" id="insertName" placeholder="Enter Points" maxlength="20"> <br><br>
+            <p><b>Loyalty Member:</b></p>
+            LoyaltyID: <input type="text" id="insertName" placeholder="Enter Loyalty ID" maxlength="20"> <br><br>
+            How many points to add: <input type="number" id="insertName" placeholder="Enter Points" maxlength="20"> <br><br>
 
-        <button type="submit"> Update </button> <br>
-    </form>
+            <button type="submit"> Update </button> <br>
+        </form>
+    </div>
     <div id="insertResultMsg"></div>
 
-    <br><hr><br> <!-- ========================================================================= -->
+    <hr> <!-- ========================================================================= -->
 
-    <h2>Query 3: DELETE Values in Loyalty Member </h2>
-    <form id="deleteLoyaltyMemberForm">
-<!--Supposed to display available Customers/Loyalty members so that user can select -->
-        Delete Entry for Customer with CustomerID: <input type="number" id="insertId" placeholder="Enter ID" required> <br><br>
+    <h3>Query 3: DELETE Values in Loyalty Member </h3>
+    <div id="q3" class = "page">
 
-        <button type="submit"> Confirm Deletion </button> <br>
-    </form>
+        <form id="deleteLoyaltyMemberForm">
+    <!--Supposed to display available Customers/Loyalty members so that user can select -->
+            Delete Entry for Customer with CustomerID: <input type="number" id="insertId" placeholder="Enter ID" required> <br><br>
+
+            <button type="submit"> Confirm Deletion </button> <br>
+        </form>
+    </div>
     <div id="insertResultMsg"></div>
 
-    <br><hr><br> <!-- ========================================================================= -->
+    <hr> <!-- ========================================================================= -->
 
-    <h2>Query 4: Selection in Customer </h2>
+    <h3>Query 4: Selection in Customer </h3>
+    <div id="q4" class = "page">
+
     <form id="customerSelectionForm">
     <div id="ruleContainer">
         <div class="rule">
@@ -223,80 +244,92 @@
         
         <button type="submit"> Confirm </button> <br>
     </form>
+    </div>
     <div id="insertResultMsg"></div>
 
-    <br><hr><br> <!-- ========================================================================= -->
+    <hr> <!-- ========================================================================= -->
 
-    <h2>Query 5: Projection on Customer </h2>
-    <form id="customerProjectionForm">
-        <p>Check the boxes next to the attributes you would like to view from all Customers</p>
-        <label for="customerIdCheckbox">CustomerID</label><input type="checkbox" id="customerIdCheckbox" name="customerIdCheckbox" checked><br><br>
+    <h3>Query 5: Projection on Customer </h3>
+    <div id="q5" class = "page">
+        <form id="customerProjectionForm">
+            <p>Check the boxes next to the attributes you would like to view from all Customers</p>
+            <label for="customerIdCheckbox">CustomerID</label><input type="checkbox" id="customerIdCheckbox" name="customerIdCheckbox"><br><br>
 
-       <label for="customerNameCheckbox">Customer Name</label><input type="checkbox" id="customerNameCheckbox" name="customerNameCheckbox" checked> <br><br> 
+        <label for="customerNameCheckbox">Customer Name</label><input type="checkbox" id="customerNameCheckbox" name="customerNameCheckbox"> <br><br> 
 
-       <label for="sexCheckbox">Sex</label> <input type="checkbox" id="sexCheckbox" name="sexCheckbox" checked><br><br>
+        <label for="sexCheckbox">Sex</label> <input type="checkbox" id="sexCheckbox" name="sexCheckbox"><br><br>
 
-       <label for="dobCheckbox">Date of Birth</label><input type="checkbox" id="dobCheckbox" name="dobCheckbox" checked><br><br>
+        <label for="dobCheckbox">Date of Birth</label><input type="checkbox" id="dobCheckbox" name="dobCheckbox"><br><br>
 
-        <label for="dateofvisitcheckbox">Date of Visit</label><input type="checkbox" id="dateofvisitcheckbox" name="dateofvisitcheckbox"><br><br>
+            <label for="dateofvisitcheckbox">Date of Visit</label><input type="checkbox" id="dateofvisitcheckbox" name="dateofvisitcheckbox"><br><br>
 
-        <label for="loyaltyIDCheckbox">Loyalty ID</label><input type="checkbox" id="loyaltyIDCheckbox" name="loyaltyIDCheckbox"><br><br>
+            <label for="loyaltyIDCheckbox">Loyalty ID</label><input type="checkbox" id="loyaltyIDCheckbox" name="loyaltyIDCheckbox"><br><br>
 
-        <label for="pointsCheckbox">Points</label><input type="checkbox" id="pointsCheckbox" name="pointsCheckbox"><br><br>
-    
-        <button type="submit">Confirm Selection</button><br>
-    </form>
-    <div id="insertResultMsg"></div>
-
-    <br><hr><br> <!-- ========================================================================= -->
-
-    <h2>Query 6: Join: Find all the Names and Customer Statuses (Guest or LoyaltyMember) of customers that have or have had tickets for a user specified ride.  </h2>
-    <form id="customerRideJoinForm">
-        Find all the Names and Customer Statuses of customers that have or have had tickets for the ride named: <input type="text" id="insertRideName" placeholder="Enter Ride Name" maxlength="255"> <br><br>
-        <p>Customers are either Guests or Loyalty Members (not both)</p>
-
-        <button type="submit"> Confirm RideName </button> <br>
-    </form>
-    <div id="insertResultMsg"></div>
-
-    <br><hr><br> <!-- ========================================================================= -->
-
-    <h2>Query 7: Aggregation with GROUP BY: Average Number of Points Grouped by Gender/Sex </h2>
-    <form id="avgPointsByGenderForm">
-        <button type="submit">Run query</button><br></br>
-    </form>
-    <div id="insertResultMsg"></div>
-
-    <br><hr><br> <!-- ========================================================================= -->
-
-    <h2>Query 8: Aggregation with HAVING:  Count number of Guests that visited GROUPED BY Month. </h2>
-    <form id="guestVisitsByMonthForm">
-        <button type="submit">Run query</button><br></br>
-    </form>
-    <div id="insertResultMsg"></div>
-
-    <br><hr><br> <!-- ========================================================================= -->
-
-    <h2>Query 9: Nested Aggregation with GROUP BY: Year of Birth with the Minimum Average number of Points grouped by Year of Birth (Which birth year has the lowest average number of points)</h2>
-    <form id="minAvgPointsByBirthYearForm">
-        <!-- <p>Show data relevant for query button: </p><button type="submit"></button> -->
-        <button type="submit">Run query</button><br></br>
+            <label for="pointsCheckbox">Points</label><input type="checkbox" id="pointsCheckbox" name="pointsCheckbox"><br><br>
         
-       
-    </form>
+            <button type="submit">Confirm Selection</button><br>
+        </form>
+    </div>
     <div id="insertResultMsg"></div>
 
-    <br><hr><br> <!-- ========================================================================= -->
+    <hr> <!-- ========================================================================= -->
 
-    <h2>Query 10: Division -- Customers that have Rode all Rides </h2>
-    <form id="customersAllRidesForm">
-        <button type="submit">Run query</button><br></br>
-    </form>
+    <h3>Query 6: Join: Find all the Names and Customer Statuses (Guest or LoyaltyMember) of customers that have or have had tickets for a user specified ride.  </h3>
+    <div id="q6" class = "page">
+        <form id="customerRideJoinForm">
+            Find all the Names and Customer Statuses of customers that have or have had tickets for the ride named: <input type="text" id="insertRideName" placeholder="Enter Ride Name" maxlength="255"> <br><br>
+            <p>Customers are either Guests or Loyalty Members (not both)</p>
+
+            <button type="submit"> Confirm RideName </button> <br>
+        </form>
+    </div>
     <div id="insertResultMsg"></div>
 
+    <hr> <!-- ========================================================================= -->
 
-    <br><hr><br> <!-- ========================================================================= -->
+    <h3>Query 7: Aggregation with GROUP BY: Average Number of Points Grouped by Gender/Sex </h3>
+    <div id="q7" class = "page">
+        <form id="avgPointsByGenderForm">
+            <button type="submit">Run query</button><br></br>
+        </form>
+    </div>
+    <div id="insertResultMsg"></div>
 
+    <hr> <!-- ========================================================================= -->
+
+    <h3>Query 8: Aggregation with HAVING:  Count number of Guests that visited GROUPED BY Month. </h3>
+    <div id="q8" class = "page">
+        <form id="guestVisitsByMonthForm">
+            <button type="submit">Run query</button><br></br>
+        </form>
+    </div>
+    <div id="insertResultMsg"></div>
+
+    <hr> <!-- ========================================================================= -->
+
+    <h3>Query 9: Nested Aggregation with GROUP BY: Year of Birth with the Minimum Average number of Points grouped by Year of Birth (Which birth year has the lowest average number of points)</h3>
+    <div id="q9" class = "page">
+        <form id="minAvgPointsByBirthYearForm">
+            <!-- <p>Show data relevant for query button: </p><button type="submit"></button> -->
+            <button type="submit">Run query</button><br></br>        
+        </form>
+    </div>
+    <div id="insertResultMsg"></div>
+
+    <hr> <!-- ========================================================================= -->
+
+    <h3>Query 10: Division -- Customers that have Rode all Rides </h3>
+    <div id="q10" class = "page">
+        <form id="customersAllRidesForm">
+            <button type="submit">Run query</button><br></br>
+        </form>
+        <div id="insertResultMsg"></div>
+    </div>
+
+    <hr> <!-- ========================================================================= -->
+
+    <h3>Update Customer Name</h3>
+    <p>Provide the CustomerID whose name you want to change, along with the new value.</p>
     <h2>Update Customer Details</h2>
     <p>Select a tuple below to edit all non-key attributes. Guest tuples only expose Guest fields, while Loyalty Members expose their loyalty attributes.</p>
     <form id="updateCustomerNameForm">
@@ -349,13 +382,34 @@
     <!-- A placeholder to display messages related to the update operation. -->
     <div id="updateNameResultMsg"></div>
 
-    <br><hr><br> <!-- ========================================================================= -->
+    <hr> <!-- ========================================================================= -->
 
-    <h2>Count the Tuples in Customer</h2>
+    <h3>Count the Tuples in Customer</h3>
     <button id="countCustomersButton"> count </button> <br><br>
     <!-- A placeholder to display the count result. -->
     <div id="countResultMsg"></div> <br>
-
+    <script>
+        const buttons = document.querySelectorAll("#nav button");
+        const pages = document.querySelectorAll(".page");
+    
+        buttons.forEach(btn => {
+            btn.addEventListener("click", () => {
+                const targetId = btn.dataset.show;
+    
+                // Hide all pages
+                pages.forEach(p => p.style.display = "none");
+    
+                // Show the selected page
+                const targetPage = document.getElementById(targetId);
+                if (targetPage) targetPage.style.display = "block";
+            });
+        });
+    
+        // Optional: show first query by default
+        if (buttons.length > 0) {
+            buttons[0].click();
+        }
+    </script>
     <!-- ===================================================================================== -->
     <!-- External JavaScript file that contains the functionality/logic for the operations above. -->
     <script src="scripts.js"></script>
