@@ -294,6 +294,47 @@ async function insertCustomer({ customerID, customerName, dateOfBirth, sex, date
     });
 }
 
+async function deleteCustomer(customerID) {
+    return await withOracleDB(async (connection) => {
+
+        // make sure that the customerID is actually numbers
+        const customerIDNumebr = Number(customerID);
+        if (!customerIDNumber || Number.isNaN(customerIDNumber)) {
+            throw new Error('Customer ID which you have provided is not valid! Please use numbers only')
+        }
+
+        // does customerID provided exist?
+        const existingCustomer = await connection.execute(
+            'SELECT 1FROM Customer WHERE CustomerID = :customerID',
+            { customerID: customerIDNumber }
+        );
+        if (!existingCustomer.rows.length) {
+            return false; // customer was not found in database!
+        }
+
+        try {
+            const result = await connection.execute(
+                'DELETE FROM Customer WHERE CustomerID = :customerID',
+                { customerID: customerIDNumber },
+                { autoCommit: true }
+            );
+            return result.rowAffected && result.rowsAffected > 0; // this will reutrn 1 for 1 row deleted if sucessful, otherwise 0
+        } catch (err) {
+            console.error('There was an error deleting the customer!', err);
+            throw err;
+        }
+
+        
+        
+    }).catch((err) => {
+        if (err && err.message){
+            throw err;  
+        }
+    });
+
+}
+
+
 
 async function updateCustomerDetails(customerID, updates = {}) {
     return await withOracleDB(async (connection) => {
