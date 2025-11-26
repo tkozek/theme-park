@@ -107,19 +107,71 @@ END;`);
     });
 }
 
-async function insertDemotable(id, name) {
-    return await withOracleDB(async (connection) => {
-        const result = await connection.execute(
-            `INSERT INTO Guest (id, name) VALUES (:id, :name)`,
-            [id, name],
-            { autoCommit: true }
-        );
+// async function insertDemotable(id, name) {
+//     return await withOracleDB(async (connection) => {
+//         const result = await connection.execute(
+//             `INSERT INTO Guest (id, name) VALUES (:id, :name)`,
+//             [id, name],
+//             { autoCommit: true }
+//         );
 
-        return result.rowsAffected && result.rowsAffected > 0;
+//         return result.rowsAffected && result.rowsAffected > 0;
+//     }).catch(() => {
+//         return false;
+//     });
+// }
+
+
+async function insertCustomer(customerID, customerName, dateOfBirth, gender, dateOfVisit, loyaltyID, loyaltyPoints) {
+    return await withOracleDB(async (connection) => {
+
+        try{
+
+            // insert the data into the customer table!! (customer must be either GUEST or LOYALTYMEMBER)
+            await connection.execute(
+                `INSERT INTO Customer (customerID, customerName, dateOfBirth, gender) VALUES (:customerID, :customerName, :TO_DATE(:dateOfBirth, 'YYYY-MM-DD'), gender)`,
+                [customerID, dateOfVisit],
+                {autocommit: false}
+            );
+
+            // if they are a guest, insert into guest table
+            if (isGuest && dateOfVisit) {
+                await connection.execute(
+                    `INSERT INTO Guest (customerID, dateOfVisit) VALUES (:customerID, TO_DATE(:dateOfVisit, 'YYYY-MM-DD')),))`,
+                    [customerID, dateofVisit],
+                    {autoCommit: false}
+                )
+            }
+
+
+            //if they are a loyalty member, insert into loyaltymember table
+            else if (!isGuest && loyaltyID !== undefined && points !== undefined){
+                const uuid = 10000 + Math.floor(Date.now() % 100000); // generating a UUID from the seasonpass table
+
+                await connection.execute(
+                    `INSERT INTO LoyaltyMember (customerID, loyaltyID, loyaltyPoints, UUID) VALUES (:customerID, :loyaltyID, :loyaltyPoints, :uuid)`,
+                    [customerID, loyaltyID, loyaltyPoints, uuid],
+                    {autoCommit: false }
+
+                );
+            }
+
+            // sucess - commit both inserts!!
+            await connection.commit();
+            return true;
+
+        } catch (err) {
+            await connection.rollback();
+            console.error('Error: Cannot insert that customer!!', err);
+            throw err;
+        }
+        
+        
     }).catch(() => {
         return false;
     });
 }
+
 
 async function updateNameDemotable(oldName, newName) {
     return await withOracleDB(async (connection) => {
