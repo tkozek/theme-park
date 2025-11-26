@@ -114,6 +114,50 @@ function renderCustomerTable(customers = customerProfilesCache) {
     });
 }
 
+function renderTableResult(elementId, columns, rows, emptyMessage) {
+    const container = typeof elementId === 'string' ? document.getElementById(elementId) : elementId;
+    if (!container) {
+        return;
+    }
+
+    container.innerHTML = '';
+
+    if (!Array.isArray(rows) || !rows.length) {
+        container.textContent = emptyMessage;
+        return;
+    }
+
+    const table = document.createElement('table');
+    table.border = '1';
+
+    const thead = document.createElement('thead');
+    const headerRow = document.createElement('tr');
+    columns.forEach((column) => {
+        const th = document.createElement('th');
+        th.textContent = column.label;
+        headerRow.appendChild(th);
+    });
+    thead.appendChild(headerRow);
+    table.appendChild(thead);
+
+    const tbody = document.createElement('tbody');
+    rows.forEach((row) => {
+        const tr = document.createElement('tr');
+        columns.forEach((column) => {
+            const td = document.createElement('td');
+            const rawValue = row ? row[column.key] : undefined;
+            const formattedValue = typeof column.format === 'function' ? column.format(rawValue, row) : rawValue;
+            const displayValue = formattedValue === undefined || formattedValue === null || formattedValue === '' ? '--' : formattedValue;
+            td.textContent = displayValue;
+            tr.appendChild(td);
+        });
+        tbody.appendChild(tr);
+    });
+    table.appendChild(tbody);
+
+    container.appendChild(table);
+}
+
 function handleCustomerProjectionSubmit(event) {
     event.preventDefault();
 
@@ -679,6 +723,72 @@ async function countCustomers() {
     }
 }
 
+async function runMinAvgPointsQuery(event) {
+    event.preventDefault();
+    const resultElement = document.getElementById('minAvgPointsByBirthYearResult');
+    if (!resultElement) {
+        return;
+    }
+
+    resultElement.textContent = 'Running query...';
+
+    try {
+        const response = await fetch('/analytics/min-avg-points-by-birth-year');
+        const responseData = await response.json();
+
+        if (response.ok && responseData.success) {
+            renderTableResult(
+                resultElement,
+                [
+                    { key: 'birthYear', label: 'Birth Year' },
+                    {
+                        key: 'averagePoints',
+                        label: 'Average Points',
+                        format: (value) => (value === undefined || value === null ? '--' : Number(value).toFixed(2))
+                    }
+                ],
+                responseData.data || [],
+                'No loyalty member data available.'
+            );
+        } else {
+            resultElement.textContent = responseData.message || 'Unable to run Query 9.';
+        }
+    } catch (error) {
+        resultElement.textContent = 'Error running Query 9.';
+    }
+}
+
+async function runCustomersAllRidesQuery(event) {
+    event.preventDefault();
+    const resultElement = document.getElementById('customersAllRidesResult');
+    if (!resultElement) {
+        return;
+    }
+
+    resultElement.textContent = 'Running query...';
+
+    try {
+        const response = await fetch('/analytics/customers-rode-all-rides');
+        const responseData = await response.json();
+
+        if (response.ok && responseData.success) {
+            renderTableResult(
+                resultElement,
+                [
+                    { key: 'customerID', label: 'Customer ID' },
+                    { key: 'customerName', label: 'Customer Name' }
+                ],
+                responseData.data || [],
+                'No customers have tickets for every ride yet.'
+            );
+        } else {
+            resultElement.textContent = responseData.message || 'Unable to run Query 10.';
+        }
+    } catch (error) {
+        resultElement.textContent = 'Error running Query 10.';
+    }
+}
+
 
 // ---------------------------------------------------------------
 // Initializes the webpage functionalities.
@@ -726,6 +836,16 @@ window.onload = function() {
     const projectionForm = document.getElementById('customerProjectionForm');
     if (projectionForm) {
         projectionForm.addEventListener('submit', handleCustomerProjectionSubmit);
+    }
+
+    const minAvgForm = document.getElementById('minAvgPointsByBirthYearForm');
+    if (minAvgForm) {
+        minAvgForm.addEventListener('submit', runMinAvgPointsQuery);
+    }
+
+    const customersAllRidesForm = document.getElementById('customersAllRidesForm');
+    if (customersAllRidesForm) {
+        customersAllRidesForm.addEventListener('submit', runCustomersAllRidesQuery);
     }
 
     const countButton = document.getElementById('countCustomersButton');

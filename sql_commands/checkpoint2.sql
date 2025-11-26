@@ -5,7 +5,7 @@ When looking at this SQL file, there are 2 parts
 2. Insert statements
 */
 -- 1. Create Tables
-start createtables.sql
+@@createtables.sql
 -- 2. Insert Statements
-start insertvaluesintotables.sql
+@@insertvalues.sql
 /
