@@ -127,6 +127,21 @@ async function insertCustomer(customerID, customerName, dateOfBirth, sex, dateOf
 
         try{
 
+            //checking to make sure that the customer is not both Guest & LoyaltyMember, but also not neither
+            const isGuest = (dateofVisit !== undefined && dateOfVisit !== null);
+            const isLoyaltyMember = (loyaltyID !== undefined & loyaltyID !== null);
+
+            //checking if both fields have been entered...
+            if (isGuest && isLoyaltyMember) {
+                throw new Error('Customer cannot be both Guest & Loyalty Member, please only fill in fields for one of them');
+            }
+
+            //checking if neither fields have been entered...
+            if (!isGuest && !isLoyaltyMember) {
+                throw new Error('Customer must be either a Guest or Loyalty Member, please fill in fields for one of them');
+            }
+
+
             // insert the data into the customer table!! (customer must be either GUEST or LOYALTYMEMBER)
             await connection.execute(
                 `INSERT INTO Customer (CustomerID, CustomerName, DOB, Sex) VALUES (:customerID, :customerName, TO_DATE(:dateOfBirth, 'YYYY-MM-DD'), :sex)`,
@@ -135,7 +150,7 @@ async function insertCustomer(customerID, customerName, dateOfBirth, sex, dateOf
             );
 
             // if they are a guest, insert into guest table
-            if (dateOfVisit !== undefined && dateOfVisit !== NULL) {
+            if (isGuest) {
                 await connection.execute(
                     `INSERT INTO Guest (CustomerID, DateOfVisit) VALUES (:customerID, TO_DATE(:dateOfVisit, 'YYYY-MM-DD'))`,
                     [customerID, dateOfVisit],
@@ -144,8 +159,8 @@ async function insertCustomer(customerID, customerName, dateOfBirth, sex, dateOf
             }
 
 
-            //if they are a loyalty member, insert into loyaltymember table
-            else if (loyaltyID !== undefined && loyaltyPoints !== undefined){
+            //if they are a loyalty member (dont need check bc final case), insert into loyaltymember table
+            else {
                 const uuid = 10000 + Math.floor(Date.now() % 100000); // generating a UUID from the seasonpass table
 
                 await connection.execute(
