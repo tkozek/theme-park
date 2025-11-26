@@ -205,24 +205,45 @@ async function countCustomers() {
     });
 }
 
-async function resetDatabase() {
+async function dropAndCreateTables() {
     return await withOracleDB(async (connection) => {
         await connection.execute(DROP_ALL_SQL);
-        console.info("Dropped all tables")
+        console.info('Dropped all tables');
         await executeSqlStatements(connection, CREATE_TABLES_SQL, 'createtables.sql');
-        console.info("created all tables")
-        if (INSERT_VALUES_SQL.trim().length > 0) {
-            await executeSqlStatements(connection, INSERT_VALUES_SQL, 'insertvalues.sql');
-            const customerCount = await connection.execute('SELECT COUNT(*) FROM Customer');
-            console.info('Seeded customers:', customerCount.rows?.[0]?.[0] ?? 0);
-            const guestCount = await connection.execute('SELECT COUNT(*) FROM Guest');
-            console.info('Seeded guest visits:', guestCount.rows?.[0]?.[0] ?? 0);
-        }
+        console.info('Created all tables');
+        await connection.commit();
         return true;
     }).catch((err) => {
-        console.error('Error resetting database:', err);
+        console.error('Error dropping/creating tables:', err);
         return false;
     });
+}
+
+async function populateSeedData() {
+    if (!INSERT_VALUES_SQL.trim().length) {
+        return true;
+    }
+
+    return await withOracleDB(async (connection) => {
+        await executeSqlStatements(connection, INSERT_VALUES_SQL, 'insertvalues.sql');
+        const customerCount = await connection.execute('SELECT COUNT(*) FROM Customer');
+        console.info('Seeded customers:', customerCount.rows?.[0]?.[0] ?? 0);
+        const guestCount = await connection.execute('SELECT COUNT(*) FROM Guest');
+        console.info('Seeded guest visits:', guestCount.rows?.[0]?.[0] ?? 0);
+        await connection.commit();
+        return true;
+    }).catch((err) => {
+        console.error('Error populating seed data:', err);
+        return false;
+    });
+}
+
+async function resetDatabase() {
+    const dropped = await dropAndCreateTables();
+    if (!dropped) {
+        return false;
+    }
+    return populateSeedData();
 }
 
 module.exports = {
@@ -232,5 +253,7 @@ module.exports = {
     insertCustomer,
     updateCustomerName,
     countCustomers,
+    dropAndCreateTables,
+    populateSeedData,
     resetDatabase
 };

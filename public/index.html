@@ -56,9 +56,19 @@
 
     <br><hr><br> <!-- ========================================================================= -->
 
-    <h2>Reset Schema (Drop & Recreate Tables)</h2>
-    <p>Runs the scripts (<code>dropall.sql</code>, <code>createtables.sql</code>, and <code>insertvalues.sql</code>) to rebuild the schema and seed data. Run this if you need a clean database.</p>
-    <button id="resetSchemaButton"> reset </button> <br>
+    <h2>Schema Utilities</h2>
+    <p>
+        Use the following buttons to manage your schema:
+        <ul>
+            <li><strong>Reset</strong>: Drops tables, recreates them, and seeds with sample data.</li>
+            <li><strong>Drop &amp; Create</strong>: Drops all tables and recreates empty tables.</li>
+            <li><strong>Populate</strong>: Inserts sample data into existing tables.</li>
+        </ul>
+    </p>
+    <button id="resetSchemaButton">Reset (Drop + Create + Populate)</button>
+    <button id="dropCreateButton">Drop &amp; Create Tables</button>
+    <button id="populateButton">Populate Seed Data</button>
+    <br>
     <!-- A placeholder to display messages related to the reset operation. -->
     <div id="resetResultMsg"></div>
 

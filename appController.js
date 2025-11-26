@@ -102,5 +102,31 @@ router.post('/reset', async (req, res) => {
     }
 });
 
+router.post('/drop-and-create', async (req, res) => {
+    try {
+        const success = await appService.dropAndCreateTables();
+        if (success) {
+            res.json({ success: true, message: 'Tables dropped and recreated.' });
+        } else {
+            res.status(HTTP_STATUS.SERVER_ERROR).json({ success: false, message: 'Failed to drop/create tables.' });
+        }
+    } catch (err) {
+        res.status(HTTP_STATUS.SERVER_ERROR).json({ success: false, message: 'Failed to drop/create tables.', error: err.message });
+    }
+});
+
+router.post('/populate', async (req, res) => {
+    try {
+        const success = await appService.populateSeedData();
+        if (success) {
+            res.json({ success: true, message: 'Seed data inserted.' });
+        } else {
+            res.status(HTTP_STATUS.SERVER_ERROR).json({ success: false, message: 'Failed to insert seed data.' });
+        }
+    } catch (err) {
+        res.status(HTTP_STATUS.SERVER_ERROR).json({ success: false, message: 'Failed to insert seed data.', error: err.message });
+    }
+});
+
 
 module.exports = router;

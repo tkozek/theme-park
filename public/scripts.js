@@ -121,7 +121,7 @@ async function fetchAndDisplayGuestVisits() {
     }
 }
 
-// This function drops all tables via dropall.sql
+// Reset schema: drop, create, and populate
 async function resetSchema() {
     const messageElement = document.getElementById('resetResultMsg');
     if (!messageElement) {
@@ -142,6 +142,54 @@ async function resetSchema() {
         }
     } catch (error) {
         messageElement.textContent = 'Error resetting database.';
+    }
+}
+
+// Drop and recreate tables only
+async function dropAndCreateSchema() {
+    const messageElement = document.getElementById('resetResultMsg');
+    if (!messageElement) {
+        return;
+    }
+
+    try {
+        const response = await fetch('/drop-and-create', {
+            method: 'POST'
+        });
+        const responseData = await response.json();
+
+        if (responseData.success) {
+            messageElement.textContent = 'Tables dropped and recreated successfully.';
+            refreshCustomers();
+        } else {
+            messageElement.textContent = responseData.message || 'Failed to drop/create tables.';
+        }
+    } catch (error) {
+        messageElement.textContent = 'Error dropping/creating tables.';
+    }
+}
+
+// Populate tables with seed data only
+async function populateSeedData() {
+    const messageElement = document.getElementById('resetResultMsg');
+    if (!messageElement) {
+        return;
+    }
+
+    try {
+        const response = await fetch('/populate', {
+            method: 'POST'
+        });
+        const responseData = await response.json();
+
+        if (responseData.success) {
+            messageElement.textContent = 'Seed data inserted successfully.';
+            refreshCustomers();
+        } else {
+            messageElement.textContent = responseData.message || 'Failed to insert seed data.';
+        }
+    } catch (error) {
+        messageElement.textContent = 'Error inserting seed data.';
     }
 }
 
@@ -278,6 +326,16 @@ window.onload = function() {
     const resetButton = document.getElementById('resetSchemaButton');
     if (resetButton) {
         resetButton.addEventListener('click', resetSchema);
+    }
+
+    const dropCreateButton = document.getElementById('dropCreateButton');
+    if (dropCreateButton) {
+        dropCreateButton.addEventListener('click', dropAndCreateSchema);
+    }
+
+    const populateButton = document.getElementById('populateButton');
+    if (populateButton) {
+        populateButton.addEventListener('click', populateSeedData);
     }
 
     const insertForm = document.getElementById('insertCustomerForm');
