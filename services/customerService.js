@@ -274,6 +274,145 @@ async function countCustomers() {
     }).catch(() => -1);
 }
 
+
+
+// helper function for selectCustomers!!!
+// think it needs to be defined here before selectcustomers?
+function buildWhereClause(filters) {
+    if (!filters || !Array.isArray(filters) || filters.length == 0) { // checking ot make sure it is not null, is an array, and is not empty!!
+        return {
+            whereClause: '',
+            bindParams: {}
+        };
+    }
+
+    const fieldMapping = {
+        customerID: 'c.CustomerID',
+        customerName: 'c.CustomerName',
+        sex: 'c.Sex',
+        dateOfBirth: 'c.DOB',
+        dateOfVisit: 'g.DateOfVisit',
+        loyaltyID: 'lm.LoyaltyID',
+        loyaltyPoints: 'lm.Points'
+    };
+
+    const operatorMapping = {
+        '<': '<',
+        '<=': '<=',
+        '>': '>',
+        '>=': '>=',
+        '=': '=',
+        '!=': '<>'
+    };
+
+    const whereParts = [];
+    const bindParams = {};
+    let paramIndex = 1;
+
+    filters.forEach((filter, index) => {
+        const {field, operator, value, connector} = filter;
+
+        if (!field || !operator || value === undefined || value === null || value === '') {
+            return; // skips the filter if it is invalid such as missing a field or has an empty value
+        }
+
+        const dbField = fieldMapping[field];
+        if (!dbField) {
+            throw new Error(`${field} is an invalid field!`);
+        }
+
+        const dbOperator = operatorMapping[operator];
+        if (!dbOperator) {
+            throw new Error(`${operator} is an invalid operator!`);
+        }
+
+        const paramName = `val${paramIndex}`;
+
+        paramIndex++;
+
+        let condition = '';
+
+
+        if (field === 'dateOfBirth' || field === 'dateOfVisit') {
+            condition = `${dbField} ${dbOperator} TO_DATE(:${paramName}, 'YYYY-MM-DD')`;
+            bindParams[paramName] = value;
+        } else if (field === 'customerName' || field === 'sex') {
+            if (operator === '=' || operator === '!=') {
+                condition = `${dbField} ${dbOperator} :${paramName}`;
+                bindParams[paramName] = value;
+            } else {
+                throw new Error(`Operator ${operator} not supported for text fields`);
+            }
+        } else {
+            condition = `${dbField} ${dbOperator} :${paramName}`;
+            bindParams[paramName] = Number(value);
+            if (Number.isNaN(bindParams[paramName])) {
+                throw new Error(`Invalid number value for field ${field}`);
+            }
+        }
+        
+        
+
+
+
+        if (index > 0 && connector) {
+            whereParts.push(connector.toUpperCase());
+        }
+        whereParts.push(`(${condition})`);
+    });
+
+
+    
+    const whereClause = whereParts.length > 0 ? `WHERE ${whereParts.join(' ')}` : '';
+
+    return { whereClause, bindParams };
+}
+
+
+async function selectCustomers(filters) {
+    return await withOracleDB(async (connection) => {
+        const {whereClause, bindParams} = buildWhereClause(filters);
+        // using bindparams that is an array that contains the values for the where clause
+        // where clause will hold values in this format ie. {val1: 100, val2: 200... etc}
+
+        const baseQuery = `
+        SELECT c.CustomerID, c.CustomerName, c.Sex,
+        TO_CHAR(c.DOB, 'YYYY-MM-DD') AS DOB,
+        TO_CHAR(g.DateOfVisit, 'YYYY-MM-DD') AS DateOfVisit,
+        lm.LoyaltyID,
+        lm.Points
+        FROM Customer c
+        LEFT JOIN Guest g ON g.CustomerID = c.CustomerID
+        LEFT JOIN LoyaltyMember lm ON lm.CustomerID = c.CustomerID
+        ${whereClause}
+        ORDER BY c.CustomerID
+        `;
+
+        // executing the SQL querry using bindparams to prevent SQL injection, as it will treat it like a string data not code!
+        // ie. can't write DROP TABLE CUSTOMER in the text box lol
+        const result = await connection.execute(baseQuery, bindParams, { 
+            outFormat: oracledb.OUT_FORMAT_OBJECT
+        });
+
+        return result.rows.map((row) => ({
+            customerID: row.CUSTOMERID,
+            customerName: row.CUSTOMERNAME,
+            sex: row.SEX,
+            dateOfBirth: row.DOB,
+            dateOfVisit: row.DATEOFVISIT,
+            loyaltyID: row.LOYALTYID,
+            loyaltyPoints: row.POINTS,
+            membershipType: row.LOYALTYID === null || row.LOYALTYID === undefined ? 'guest' : 'loyalty'
+        }));
+    }).catch((err) => {
+        console.error('Unable to select customers based on input provided', err);
+        throw err;
+    });
+}
+
+
+
+
 module.exports = {
     fetchCustomers,
     fetchCustomerProfiles,
@@ -281,5 +420,6 @@ module.exports = {
     insertCustomer,
     deleteCustomer,
     updateCustomerDetails,
-    countCustomers
+    countCustomers,
+    selectCustomers
 };
