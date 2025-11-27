@@ -52,6 +52,25 @@ router.get('/count', asyncHandler(async (req, res) => {
     res.status(HTTP_STATUS.SERVER_ERROR).json({ success: false, message: 'Unable to count customers.' });
 }, 'Unable to count customers.'));
 
+router.post('/filter', asyncHandler(async (req, res) => {
+    const filters = req.body.filters || [];
+    
+    if (!Array.isArray(filters)) {
+        return res.status(HTTP_STATUS.BAD_REQUEST).json({
+             success: false, message: 'Filters must be an array!!!' 
+            });
+    }
+
+    try {
+        const customers = await customerService.selectCustomers(filters);
+        res.json({ success: true, data: customers });
+    } catch (err) {
+        res.status(HTTP_STATUS.BAD_REQUEST).json({ 
+            success: false, message: err.message || 'Failed to filter customers!' 
+        });
+    }
+}, 'Failed to filter customers!'));
+
 router.delete('/:customerID', asyncHandler(async (req, res) => {
     const { customerID } = req.params;
 
