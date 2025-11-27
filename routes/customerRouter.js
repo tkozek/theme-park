@@ -52,4 +52,18 @@ router.get('/count', asyncHandler(async (req, res) => {
     res.status(HTTP_STATUS.SERVER_ERROR).json({ success: false, message: 'Unable to count customers.' });
 }, 'Unable to count customers.'));
 
+router.delete('/:customerID', asyncHandler(async (req, res) => {
+    const { customerID } = req.params;
+
+    try {
+        const deleted = await customerService.deleteCustomer(customerID);
+        if (deleted) {
+            return res.json({ success: true, message: 'Customer deleted successfully!' });
+        }
+        return res.status(HTTP_STATUS.NOT_FOUND).json({ success: false, message: 'Customer not found!' });
+    } catch (err) {
+        res.status(HTTP_STATUS.BAD_REQUEST).json({ success: false, message: err.message || 'Failed to delete the customer' });
+    }
+}, 'Failed to delete customer.'));
+
 module.exports = router;
