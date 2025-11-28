@@ -6,7 +6,8 @@ const {
     getCustomersWhoRodeAllRides,
     listRideNames,
     getCustomersByRide,
-    getAveragePointsByGender
+    getAveragePointsByGender,
+    getGuestCountsByMonth
 } = require('../services/analyticsService');
 
 router.get('/min-avg-points-by-birth-year', asyncHandler(async (req, res) => {
@@ -34,5 +35,10 @@ router.get('/avg-points-by-gender', asyncHandler(async (req, res) => {
     const stats = await getAveragePointsByGender();
     res.json({ success: true, data: stats });
 }, 'Failed to run Query 7.'));
+
+router.get('/guest-counts-by-month', asyncHandler(async (req, res) => {
+    const stats = await getGuestCountsByMonth();
+    res.json({ success: true, data: stats });
+}, 'Failed to run Query 8.'));
 
 module.exports = router;

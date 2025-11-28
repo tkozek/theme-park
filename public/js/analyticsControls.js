@@ -198,3 +198,34 @@ export async function runCustomersAllRidesQuery(event) {
         resultElement.textContent = 'Error running Query 10.';
     }
 }
+
+export async function runGuestVisitsByMonthQuery(event) {
+    event.preventDefault();
+    const resultElement = document.getElementById('guestVisitsByMonthResult');
+    if (!resultElement) {
+        return;
+    }
+
+    resultElement.textContent = 'Running query...';
+
+    try {
+        const response = await fetch('/analytics/guest-counts-by-month');
+        const responseData = await response.json();
+
+        if (response.ok && responseData.success) {
+            renderTableResult(
+                resultElement,
+                [
+                    { key: 'month', label: 'Month' },
+                    { key: 'guestCount', label: 'Guest Count' }
+                ],
+                responseData.data || [],
+                'No guest visits meet the criteria.'
+            );
+        } else {
+            resultElement.textContent = responseData.message || 'Unable to run Query 8.';
+        }
+    } catch (error) {
+        resultElement.textContent = 'Error running Query 8.';
+    }
+}

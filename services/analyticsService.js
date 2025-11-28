@@ -6,6 +6,7 @@ const CUSTOMERS_WHO_RODE_ALL_RIDES_SQL = loadSqlCommand('q10/q10_customers_who_r
 const LIST_RIDES_SQL = loadSqlCommand('q6/q6_list_rides.sql');
 const CUSTOMERS_BY_RIDE_SQL = loadSqlCommand('q6/q6_customers_by_ride.sql');
 const AVG_POINTS_BY_GENDER_SQL = loadSqlCommand('q7/q7_avg_points_group_genders_.sql');
+const GUEST_COUNTS_BY_MONTH_SQL = loadSqlCommand('q8/q8_guest_counts_by_month.sql');
 
 async function getMinAvgPointsByBirthYear() {
     return await withOracleDB(async (connection) => {
@@ -84,10 +85,26 @@ async function getAveragePointsByGender() {
     }).catch(() => []);
 }
 
+async function getGuestCountsByMonth() {
+    return await withOracleDB(async (connection) => {
+        const result = await connection.execute(
+            GUEST_COUNTS_BY_MONTH_SQL,
+            [],
+            { outFormat: oracledb.OUT_FORMAT_OBJECT }
+        );
+
+        return result.rows.map((row) => ({
+            month: row.VISIT_MONTH,
+            guestCount: row.GUEST_COUNT
+        }));
+    }).catch(() => []);
+}
+
 module.exports = {
     getMinAvgPointsByBirthYear,
     getCustomersWhoRodeAllRides,
     listRideNames,
     getCustomersByRide,
-    getAveragePointsByGender
+    getAveragePointsByGender,
+    getGuestCountsByMonth
 };
