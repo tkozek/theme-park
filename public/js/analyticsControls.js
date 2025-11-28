@@ -133,6 +133,41 @@ export async function runMinAvgPointsQuery(event) {
     }
 }
 
+export async function runAvgPointsByGenderQuery(event) {
+    event.preventDefault();
+    const resultElement = document.getElementById('avgPointsByGenderResult');
+    if (!resultElement) {
+        return;
+    }
+
+    resultElement.textContent = 'Running query...';
+
+    try {
+        const response = await fetch('/analytics/avg-points-by-gender');
+        const responseData = await response.json();
+
+        if (response.ok && responseData.success) {
+            renderTableResult(
+                resultElement,
+                [
+                    { key: 'gender', label: 'Gender/Sex' },
+                    {
+                        key: 'averagePoints',
+                        label: 'Average Points',
+                        format: (value) => (value === undefined || value === null ? '--' : Number(value).toFixed(2))
+                    }
+                ],
+                responseData.data || [],
+                'No loyalty member data available.'
+            );
+        } else {
+            resultElement.textContent = responseData.message || 'Unable to run Query 7.';
+        }
+    } catch (error) {
+        resultElement.textContent = 'Error running Query 7.';
+    }
+}
+
 export async function runCustomersAllRidesQuery(event) {
     event.preventDefault();
     const resultElement = document.getElementById('customersAllRidesResult');
