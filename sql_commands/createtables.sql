@@ -118,8 +118,8 @@ CREATE TABLE FastPassTicket (
     REFERENCES Ticket2 (TicketID)
     ON DELETE CASCADE,
 
-  CHECK (NumberOfRides >= 0),
-  CHECK (ValidHours >= 0)
+  CONSTRAINT chk_fastpass_rides CHECK (NumberOfRides >= 0),
+  CONSTRAINT chk_fastpass_validhours CHECK (ValidHours >= 0)
 );
 
 
