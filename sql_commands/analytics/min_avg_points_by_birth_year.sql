@@ -6,6 +6,7 @@ WITH avg_points_per_year AS (
     JOIN LoyaltyMember lm ON lm.CustomerID = c.CustomerID
     WHERE c.DOB IS NOT NULL
     GROUP BY EXTRACT(YEAR FROM c.DOB)
+    HAVING COUNT(*) > 1
 )
 SELECT birth_year, avg_points
 FROM avg_points_per_year
