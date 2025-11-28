@@ -82,9 +82,10 @@ CREATE TABLE Hotel2 (
 
 CREATE TABLE Ticket1 (
   ValidFrom     DATE NOT NULL,
-  ValidHours    INTEGER CHECK (ValidHours >= 0),      
+  ValidHours    INTEGER,
   ValidUntil    DATE,
-  PRIMARY KEY (ValidFrom, ValidHours)
+  PRIMARY KEY (ValidFrom, ValidHours),
+  CONSTRAINT chk_ticket1_validhours CHECK (ValidHours >= 0)
 );
 
 
@@ -231,7 +232,7 @@ CREATE TABLE HotelStay (
   CONSTRAINT fk_hs_booking FOREIGN KEY (BookingNumber)
     REFERENCES Booking2 (BookingNumber)
     ON DELETE CASCADE,
-  CHECK (NumGuests > 0)
+  CONSTRAINT chk_hotelstay_numguests CHECK (NumGuests > 0)
 );
 
 -- When Rides are deleted(should never be), we should keep the ticket association with the ride just in case
