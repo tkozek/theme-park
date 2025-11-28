@@ -30,49 +30,54 @@
 
     <hr><br> <!-- ========================================================================= -->
 
-    <!-- Show Customer table (matches Customer relation in createtables.sql). 
-        Data will be fetched and inserted here dynamically using JavaScript. -->
-    <h3>Show Customers</h3>
-    <button id="refreshCustomersTableButton">Refresh Customers</button>
-    <table id="customersTable" border="1">
-        <thead>
-            <tr></tr>
-        </thead>
-        <tbody>
-        </tbody>
+    <table style="width: 100%; border: none;" cellspacing="16" cellpadding="0">
+        <tr>
+            <td valign="top" style="width: 33%;">
+                <h3>Show Customers</h3>
+                <button id="refreshCustomersTableButton">Refresh Customers</button>
+                <table id="customersTable" border="1">
+                    <thead>
+                        <tr></tr>
+                    </thead>
+                    <tbody>
+                    </tbody>
+                </table>
+            </td>
+            <td valign="top" style="width: 33%;">
+                <h3>Show Loyalty Members</h3>
+                <button id="refreshLoyaltyMembersTableButton">Refresh Loyalty Members</button>
+                <table id="loyaltyMembersTable" border="1">
+                    <thead>
+                        <tr>
+                            <th>Customer ID</th>
+                            <th>Name</th>
+                            <th>Sex</th>
+                            <th>Date of Birth</th>
+                            <th>Loyalty ID</th>
+                            <th>Points</th>
+                        </tr>
+                    </thead>
+                    <tbody>
+                    </tbody>
+                </table>
+            </td>
+            <td valign="top" style="width: 33%;">
+                <h3>Show Guest Visits</h3>
+                <button id="refreshGuestVisitsTableButton">Refresh Guest Visits</button>
+                <table id="guestVisitsTable" border="1">
+                    <thead>
+                        <tr>
+                            <th>Customer ID</th>
+                            <th>Name</th>
+                            <th>Date of Visit</th>
+                        </tr>
+                    </thead>
+                    <tbody>
+                    </tbody>
+                </table>
+            </td>
+        </tr>
     </table>
-
-    <h3>Show Loyalty Members</h3>
-    <button id="refreshLoyaltyMembersTableButton">Refresh Loyalty Members</button>
-    <table id="loyaltyMembersTable" border="1">
-        <thead>
-            <tr>
-                <th>Customer ID</th>
-                <th>Name</th>
-                <th>Sex</th>
-                <th>Date of Birth</th>
-                <th>Loyalty ID</th>
-                <th>Points</th>
-            </tr>
-        </thead>
-        <tbody>
-        </tbody>
-    </table>
-
-    <!-- Placeholder for another relation view (e.g., Guest or LoyaltyMember). -->
-        <h3>Show Guest Visits</h3>
-        <button id="refreshGuestVisitsTableButton">Refresh Guest Visits</button>
-        <table id="guestVisitsTable" border="1">
-            <thead>
-                <tr>
-                    <th>Customer ID</th>
-                    <th>Name</th>
-                    <th>Date of Visit</th>
-                </tr>
-            </thead>
-            <tbody>
-            </tbody>
-        </table>
 
     <hr> <!-- ========================================================================= -->
 
