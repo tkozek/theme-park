@@ -16,5 +16,5 @@ and operational data into one platform, it enables staff and management to effic
 guest activity, apply rate modifiers, validate ride access, and track maintenance.
 
 
-
+There is no additional information in the README file. Thank you.
 
