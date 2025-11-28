@@ -7,7 +7,8 @@ import {
     initializeRideDropdown,
     handleCustomerRideJoinSubmit,
     runMinAvgPointsQuery,
-    runCustomersAllRidesQuery
+    runCustomersAllRidesQuery,
+    runAvgPointsByGenderQuery
 } from './js/analyticsControls.js';
 import { handleCustomerSelectionSubmit } from './js/customerSelection.js';
 import { refreshCustomers, refreshCustomerTable, refreshGuestVisitsTable, refreshLoyaltyMembersTable } from './js/refresh.js';
@@ -46,6 +47,7 @@ document.addEventListener('DOMContentLoaded', () => {
     attachSubmitListener('customerProjectionForm', handleCustomerProjectionSubmit);
     attachSubmitListener('customerRideJoinForm', handleCustomerRideJoinSubmit);
     attachSubmitListener('minAvgPointsByBirthYearForm', runMinAvgPointsQuery);
+    attachSubmitListener('avgPointsByGenderForm', runAvgPointsByGenderQuery);
     attachSubmitListener('customersAllRidesForm', runCustomersAllRidesQuery);
 
     const updateCustomerSelect = document.getElementById('updateCustomerSelect');
