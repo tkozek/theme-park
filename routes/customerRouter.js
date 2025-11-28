@@ -44,6 +44,24 @@ router.patch('/:customerID', asyncHandler(async (req, res) => {
     }
 }, 'Failed to update customer.'));
 
+router.delete('/:customerID/loyalty', asyncHandler(async (req, res) => {
+    const { customerID } = req.params;
+    const removed = await customerService.deleteLoyaltyMembership(customerID);
+    if (removed) {
+        return res.json({ success: true, message: 'Loyalty membership deleted.' });
+    }
+    res.status(HTTP_STATUS.NOT_FOUND).json({ success: false, message: 'Loyalty membership not found for that customer.' });
+}, 'Failed to delete loyalty membership.'));
+
+router.delete('/:customerID', asyncHandler(async (req, res) => {
+    const { customerID } = req.params;
+    const deleted = await customerService.deleteCustomer(customerID);
+    if (deleted) {
+        return res.json({ success: true, message: 'Customer deleted successfully.' });
+    }
+    res.status(HTTP_STATUS.NOT_FOUND).json({ success: false, message: 'Customer not found.' });
+}, 'Failed to delete customer.'));
+
 router.get('/count', asyncHandler(async (req, res) => {
     const count = await customerService.countCustomers();
     if (count >= 0) {
@@ -51,5 +69,10 @@ router.get('/count', asyncHandler(async (req, res) => {
     }
     res.status(HTTP_STATUS.SERVER_ERROR).json({ success: false, message: 'Unable to count customers.' });
 }, 'Unable to count customers.'));
+
+router.get('/stats', asyncHandler(async (req, res) => {
+    const counts = await customerService.getCustomerStats();
+    res.json({ success: true, counts });
+}, 'Unable to fetch customer statistics.'));
 
 module.exports = router;

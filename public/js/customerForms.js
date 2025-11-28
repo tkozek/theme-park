@@ -143,23 +143,36 @@ export async function updateCustomerName(event) {
     }
 }
 
-export async function countCustomers() {
-    const messageElement = document.getElementById('countResultMsg');
-    if (!messageElement) {
+export async function deleteLoyaltyMembership(event) {
+    event.preventDefault();
+
+    const customerIdInput = document.getElementById('deleteCustomerId') || document.getElementById('insertId');
+    const customerIDValue = customerIdInput ? customerIdInput.value : '';
+    const messageElement = document.getElementById('deleteResultMsg');
+    const setMessage = (text) => {
+        if (messageElement) {
+            messageElement.textContent = text;
+        }
+    };
+
+    if (!customerIDValue) {
+        setMessage('Enter a CustomerID to delete the loyalty member record.');
         return;
     }
 
     try {
-        const response = await fetch('/customers/count');
-        const responseData = await response.json();
+        const response = await fetch(`/customers/${customerIDValue}/loyalty`, {
+            method: 'DELETE'
+        });
 
+        const responseData = await response.json();
         if (response.ok && responseData.success) {
-            const tupleCount = responseData.count;
-            messageElement.textContent = `Number of customers: ${tupleCount}`;
+            setMessage('Loyalty membership deleted successfully!');
+            await refreshCustomers();
         } else {
-            messageElement.textContent = responseData.message || 'Error counting customers!';
+            setMessage(responseData.message || 'Error deleting loyalty membership!');
         }
     } catch (error) {
-        messageElement.textContent = 'Error counting customers!';
+        setMessage('Error deleting loyalty membership!');
     }
 }

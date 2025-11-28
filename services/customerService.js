@@ -17,6 +17,8 @@ const MERGE_LOYALTY_MEMBER_PARTIAL_SQL = loadSqlCommand('customers/merge_loyalty
 const UPDATE_GUEST_VISIT_SQL = loadSqlCommand('customers/update_guest_visit.sql');
 const UPDATE_CUSTOMER_BASE_SQL = loadSqlCommand('customers/update_customer_base.sql');
 const COUNT_CUSTOMERS_SQL = loadSqlCommand('common/count_customers.sql');
+const COUNT_GUESTS_SQL = loadSqlCommand('common/count_guests.sql');
+const COUNT_LOYALTY_MEMBERS_SQL = loadSqlCommand('common/count_loyalty_members.sql');
 
 async function fetchCustomers() {
     return await withOracleDB(async (connection) => {
@@ -147,6 +149,23 @@ async function deleteCustomer(customerID) {
     });
 }
 
+async function deleteLoyaltyMembership(customerID) {
+    return await withOracleDB(async (connection) => {
+        const numericCustomerID = ensureNumericCustomerId(customerID);
+        const result = await connection.execute(
+            DELETE_LOYALTY_MEMBER_SQL,
+            { customerID: numericCustomerID },
+            { autoCommit: true }
+        );
+        return result.rowsAffected && result.rowsAffected > 0;
+    }).catch((err) => {
+        if (err && err.message) {
+            throw err;
+        }
+        return false;
+    });
+}
+
 async function updateCustomerDetails(customerID, updates = {}) {
     return await withOracleDB(async (connection) => {
         const numericCustomerID = ensureNumericCustomerId(customerID);
@@ -267,11 +286,33 @@ async function updateCustomerDetails(customerID, updates = {}) {
     });
 }
 
-async function countCustomers() {
+async function runCountQuery(sql) {
     return await withOracleDB(async (connection) => {
-        const result = await connection.execute(COUNT_CUSTOMERS_SQL);
-        return result.rows[0][0];
+        const result = await connection.execute(sql);
+        return result.rows?.[0]?.[0] ?? -1;
     }).catch(() => -1);
+}
+
+async function countCustomers() {
+    return runCountQuery(COUNT_CUSTOMERS_SQL);
+}
+
+async function countGuests() {
+    return runCountQuery(COUNT_GUESTS_SQL);
+}
+
+async function countLoyaltyMembers() {
+    return runCountQuery(COUNT_LOYALTY_MEMBERS_SQL);
+}
+
+async function getCustomerStats() {
+    const [customers, guests, loyaltyMembers] = await Promise.all([
+        countCustomers(),
+        countGuests(),
+        countLoyaltyMembers()
+    ]);
+
+    return { customers, guests, loyaltyMembers };
 }
 
 module.exports = {
@@ -280,6 +321,10 @@ module.exports = {
     fetchGuestVisits,
     insertCustomer,
     deleteCustomer,
+    deleteLoyaltyMembership,
     updateCustomerDetails,
-    countCustomers
+    countCustomers,
+    countGuests,
+    countLoyaltyMembers,
+    getCustomerStats
 };

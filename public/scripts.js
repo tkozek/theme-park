@@ -1,7 +1,7 @@
 import { checkDbConnection } from './js/dbStatus.js';
 import { syncProjectionCheckboxes, handleCustomerProjectionSubmit } from './js/tableRenderer.js';
 import { handleCustomerSelectionChange, handleMembershipTypeChange } from './js/customerProfiles.js';
-import { insertCustomer, updateCustomerName, countCustomers } from './js/customerForms.js';
+import { insertCustomer, updateCustomerName, deleteLoyaltyMembership } from './js/customerForms.js';
 import { resetSchema, dropAndCreateSchema, populateSeedData } from './js/schemaControls.js';
 import { runMinAvgPointsQuery, runCustomersAllRidesQuery } from './js/analyticsControls.js';
 import { refreshCustomers } from './js/refresh.js';
@@ -28,10 +28,10 @@ document.addEventListener('DOMContentLoaded', () => {
     attachClickListener('resetSchemaButton', resetSchema);
     attachClickListener('dropCreateButton', dropAndCreateSchema);
     attachClickListener('populateButton', populateSeedData);
-    attachClickListener('countCustomersButton', countCustomers);
 
     attachSubmitListener('insertCustomerForm', insertCustomer);
     attachSubmitListener('updateCustomerNameForm', updateCustomerName);
+    attachSubmitListener('deleteLoyaltyMemberForm', deleteLoyaltyMembership);
     attachSubmitListener('customerProjectionForm', handleCustomerProjectionSubmit);
     attachSubmitListener('minAvgPointsByBirthYearForm', runMinAvgPointsQuery);
     attachSubmitListener('customersAllRidesForm', runCustomersAllRidesQuery);
