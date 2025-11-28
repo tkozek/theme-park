@@ -1,3 +1,12 @@
+const guestColumns = ['customerID', 'customerName', 'dateOfVisit'];
+
+function insertMessageRow(body, message) {
+    const row = body.insertRow();
+    const cell = row.insertCell(0);
+    cell.colSpan = guestColumns.length;
+    cell.textContent = message;
+}
+
 export async function fetchAndDisplayGuestVisits() {
     const tableElement = document.getElementById('guestVisitsTable');
     if (!tableElement) {
@@ -12,30 +21,28 @@ export async function fetchAndDisplayGuestVisits() {
     tableBody.innerHTML = '';
 
     try {
-        const response = await fetch('/guests');
+        const response = await fetch('/customers/guests');
+        if (!response.ok) {
+            throw new Error('Request failed');
+        }
+
         const responseData = await response.json();
-        const visits = responseData.data || [];
+        const visits = Array.isArray(responseData.data) ? responseData.data : [];
 
         if (!visits.length) {
-            const row = tableBody.insertRow();
-            const cell = row.insertCell(0);
-            cell.colSpan = 3;
-            cell.textContent = 'No guest visits recorded.';
+            insertMessageRow(tableBody, 'No guest visits recorded.');
             return;
         }
 
         visits.forEach((visit) => {
-            const values = Array.isArray(visit) ? visit : Object.values(visit);
             const row = tableBody.insertRow();
-            values.forEach((field, index) => {
+            guestColumns.forEach((key, index) => {
                 const cell = row.insertCell(index);
-                cell.textContent = field;
+                const value = visit?.[key];
+                cell.textContent = value ?? '--';
             });
         });
     } catch (error) {
-        const row = tableBody.insertRow();
-        const cell = row.insertCell(0);
-        cell.colSpan = 3;
-        cell.textContent = 'Unable to load guest visits.';
+        insertMessageRow(tableBody, 'Unable to load guest visits.');
     }
 }

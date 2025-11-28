@@ -1,7 +1,12 @@
 const express = require('express');
 const router = express.Router();
 const { asyncHandler } = require('./routeUtils');
-const { getMinAvgPointsByBirthYear, getCustomersWhoRodeAllRides } = require('../services/analyticsService');
+const {
+    getMinAvgPointsByBirthYear,
+    getCustomersWhoRodeAllRides,
+    listRideNames,
+    getCustomersByRide
+} = require('../services/analyticsService');
 
 router.get('/min-avg-points-by-birth-year', asyncHandler(async (req, res) => {
     const result = await getMinAvgPointsByBirthYear();
@@ -12,5 +17,16 @@ router.get('/customers-rode-all-rides', asyncHandler(async (req, res) => {
     const result = await getCustomersWhoRodeAllRides();
     res.json({ success: true, data: result });
 }, 'Failed to run Query 10.'));
+
+router.get('/rides', asyncHandler(async (req, res) => {
+    const rides = await listRideNames();
+    res.json({ success: true, data: rides });
+}, 'Failed to list rides.'));
+
+router.get('/rides/:rideName/customers', asyncHandler(async (req, res) => {
+    const { rideName } = req.params;
+    const customers = await getCustomersByRide(rideName);
+    res.json({ success: true, data: customers });
+}, 'Failed to fetch customers for ride.'));
 
 module.exports = router;

@@ -33,6 +33,7 @@
     <!-- Show Customer table (matches Customer relation in createtables.sql). 
         Data will be fetched and inserted here dynamically using JavaScript. -->
     <h3>Show Customers</h3>
+    <button id="refreshCustomersTableButton">Refresh Customers</button>
     <table id="customersTable" border="1">
         <thead>
             <tr></tr>
@@ -41,8 +42,26 @@
         </tbody>
     </table>
 
+    <h3>Show Loyalty Members</h3>
+    <button id="refreshLoyaltyMembersTableButton">Refresh Loyalty Members</button>
+    <table id="loyaltyMembersTable" border="1">
+        <thead>
+            <tr>
+                <th>Customer ID</th>
+                <th>Name</th>
+                <th>Sex</th>
+                <th>Date of Birth</th>
+                <th>Loyalty ID</th>
+                <th>Points</th>
+            </tr>
+        </thead>
+        <tbody>
+        </tbody>
+    </table>
+
     <!-- Placeholder for another relation view (e.g., Guest or LoyaltyMember). -->
         <h3>Show Guest Visits</h3>
+        <button id="refreshGuestVisitsTableButton">Refresh Guest Visits</button>
         <table id="guestVisitsTable" border="1">
             <thead>
                 <tr>
@@ -108,14 +127,14 @@
 
     <h3>Query 2: UPDATE Values in Loyalty Member </h3>
     <div id="q2" class = "page">
-        <h2>Update Customer Details</h2>
-        <p>Select a tuple below to edit all non-key attributes. Guest tuples only expose Guest fields, while Loyalty Members expose their loyalty attributes.</p>
+        <h2>Update Loyalty Member Details</h2>
+        <p>Select a loyalty member tuple below to edit non-key attributes.</p>
         <form id="updateCustomerNameForm">
-            <label for="updateCustomerSelect">Select Customer Tuple:</label>
-            <select id="updateCustomerSelect" aria-label="Customer tuples for update">
+            <label for="updateCustomerSelect">Select Loyalty Member Tuple:</label>
+            <select id="updateCustomerSelect" aria-label="Loyalty member tuples for update">
                 <option value="">Loading customers...</option>
             </select>
-            <div id="selectedCustomerDetails">Select a customer to view their current details.</div>
+            <div id="selectedCustomerDetails">Select a loyalty member to view their current details.</div>
             <input type="hidden" id="updateCustomerId">
 
             <fieldset>
@@ -131,29 +150,13 @@
             </fieldset>
 
             <fieldset>
-                <legend>Customer Type</legend>
-                <label>
-                    <input type="radio" name="updateMembershipType" value="guest"> Guest
-                </label>
-                <label>
-                    <input type="radio" name="updateMembershipType" value="loyalty"> Loyalty Member
-                </label>
-            </fieldset>
-
-            <div id="guestUpdateFields" class="membership-fields" style="display: none;">
-                <h4>Guest Details</h4>
-                <label for="updateCustomerVisitDate">Date of Visit:</label>
-                <input type="date" id="updateCustomerVisitDate"> <br><br>
-            </div>
-
-            <div id="loyaltyUpdateFields" class="membership-fields" style="display: none;">
-                <h4>Loyalty Member Details</h4>
+                <legend>Loyalty Member Details</legend>
                 <label for="updateCustomerLoyaltyId">Loyalty ID:</label>
                 <input type="text" id="updateCustomerLoyaltyId" maxlength="20"> <br><br>
 
                 <label for="updateCustomerLoyaltyPoints">Points:</label>
                 <input type="number" id="updateCustomerLoyaltyPoints" min="0"> <br><br>
-            </div>
+            </fieldset>
 
             <button type="submit"> Save Changes </button> <br>
         </form>
@@ -167,7 +170,7 @@
 
         <form id="deleteLoyaltyMemberForm">
     <!--Supposed to display available Customers/Loyalty members so that user can select -->
-            Delete Entry for Customer with CustomerID: <input type="number" id="insertId" placeholder="Enter ID" required> <br><br>
+            Delete Entry for Loyalty Member with LoyaltyID: <input type="number" id="insertId" placeholder="Enter ID" required> <br><br>
 
             <button type="submit"> Confirm Deletion </button> <br>
         </form>
@@ -275,8 +278,8 @@
         
         <button type="submit"> Confirm </button> <br>
     </form>
+    <div id="customerSelectionResult" class="query-result"></div>
     </div>
-    <div id="insertResultMsg"></div>
 
     <hr> <!-- ========================================================================= -->
 
@@ -308,11 +311,15 @@
     <h3>Query 6: Join: Find all the Names and Customer Statuses (Guest or LoyaltyMember) of customers that have or have had tickets for a user specified ride.  </h3>
     <div id="q6" class = "page">
         <form id="customerRideJoinForm">
-            Find all the Names and Customer Statuses of customers that have or have had tickets for the ride named: <input type="text" id="insertRideName" placeholder="Enter Ride Name" maxlength="255"> <br><br>
+            <label for="rideSelect">Select a ride:</label>
+            <select id="rideSelect" disabled>
+                <option value="">Loading rides...</option>
+            </select>
             <p>Customers are either Guests or Loyalty Members (not both)</p>
 
-            <button type="submit"> Confirm RideName </button> <br>
+            <button type="submit">Show matching customers</button> <br>
         </form>
+        <div id="customerRideJoinResult" class="query-result"></div>
     </div>
     <div id="insertResultMsg"></div>
 
@@ -357,10 +364,6 @@
         <div id="customersAllRidesResult" class="query-result"></div>
     </div>
 
-    <h3>Count the Tuples in Customer</h3>
-    <button id="countCustomersButton"> count </button> <br><br>
-    <!-- A placeholder to display the count result. -->
-    <div id="countResultMsg"></div> <br>
     <script>
         const buttons = document.querySelectorAll("#nav button");
         const pages = document.querySelectorAll(".page");

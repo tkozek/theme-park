@@ -1,14 +1,9 @@
 export function clearUpdateFormFields() {
-    ['updateCustomerNewName', 'updateCustomerDob', 'updateCustomerSex', 'updateCustomerVisitDate', 'updateCustomerLoyaltyId', 'updateCustomerLoyaltyPoints'].forEach((id) => {
+    ['updateCustomerNewName', 'updateCustomerDob', 'updateCustomerSex', 'updateCustomerLoyaltyId', 'updateCustomerLoyaltyPoints'].forEach((id) => {
         const input = document.getElementById(id);
         if (input) {
             input.value = '';
         }
-    });
-
-    const radios = document.querySelectorAll('input[name="updateMembershipType"]');
-    radios.forEach((radio) => {
-        radio.checked = false;
     });
 }
 
@@ -17,32 +12,6 @@ export function setFieldValue(id, value) {
     if (element) {
         element.value = value === undefined || value === null ? '' : value;
     }
-}
-
-export function updateMembershipFieldVisibility(type) {
-    const guestFields = document.getElementById('guestUpdateFields');
-    const loyaltyFields = document.getElementById('loyaltyUpdateFields');
-
-    if (guestFields) {
-        guestFields.style.display = type === 'guest' ? 'block' : 'none';
-    }
-    if (loyaltyFields) {
-        loyaltyFields.style.display = type === 'loyalty' ? 'block' : 'none';
-    }
-}
-
-export function setMembershipRadio(type) {
-    const radios = document.querySelectorAll('input[name="updateMembershipType"]');
-    let matched = false;
-    radios.forEach((radio) => {
-        if (radio.value === type) {
-            radio.checked = true;
-            matched = true;
-        } else {
-            radio.checked = false;
-        }
-    });
-    updateMembershipFieldVisibility(matched ? type : null);
 }
 
 export function setUpdateSelectMessage(message) {
@@ -68,5 +37,4 @@ export function setUpdateSelectMessage(message) {
         detailsElement.textContent = message;
     }
     clearUpdateFormFields();
-    updateMembershipFieldVisibility(null);
 }

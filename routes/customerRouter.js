@@ -13,6 +13,16 @@ router.get('/profiles', asyncHandler(async (req, res) => {
     res.json({ success: true, data: profiles });
 }, 'Failed to fetch customer profiles.'));
 
+router.get('/guests', asyncHandler(async (req, res) => {
+    const guests = await customerService.fetchGuestVisits();
+    res.json({ success: true, data: guests });
+}, 'Failed to fetch guest visits.'));
+
+router.get('/loyalty-members', asyncHandler(async (req, res) => {
+    const loyaltyMembers = await customerService.fetchLoyaltyMembers();
+    res.json({ success: true, data: loyaltyMembers });
+}, 'Failed to fetch loyalty members.'));
+
 router.post('/', asyncHandler(async (req, res) => {
     try {
         const inserted = await customerService.insertCustomer(req.body || {});
@@ -43,6 +53,21 @@ router.patch('/:customerID', asyncHandler(async (req, res) => {
         res.status(HTTP_STATUS.BAD_REQUEST).json({ success: false, message: err.message || 'Failed to update customer.' });
     }
 }, 'Failed to update customer.'));
+
+router.post('/selection', asyncHandler(async (req, res) => {
+    const { rules } = req.body || {};
+
+    if (!Array.isArray(rules) || !rules.length) {
+        return res.status(HTTP_STATUS.BAD_REQUEST).json({ success: false, message: 'Provide at least one rule.' });
+    }
+
+    try {
+        const result = await customerService.runCustomerSelection(rules);
+        res.json({ success: true, data: result });
+    } catch (err) {
+        res.status(HTTP_STATUS.BAD_REQUEST).json({ success: false, message: err.message || 'Failed to run customer selection.' });
+    }
+}, 'Failed to run customer selection.'));
 
 router.delete('/:customerID/loyalty', asyncHandler(async (req, res) => {
     const { customerID } = req.params;

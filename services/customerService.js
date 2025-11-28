@@ -4,6 +4,7 @@ const { loadSqlCommand } = require('../utils/sqlLoader');
 const SELECT_ALL_CUSTOMERS_SQL = loadSqlCommand('customers/select_all_customers.sql');
 const SELECT_CUSTOMER_PROFILES_SQL = loadSqlCommand('customers/select_customer_profiles.sql');
 const SELECT_GUEST_VISITS_SQL = loadSqlCommand('customers/select_guest_visits.sql');
+const SELECT_LOYALTY_MEMBERS_SQL = loadSqlCommand('customers/select_loyalty_members.sql');
 const INSERT_GUEST_SQL = loadSqlCommand('customers/insert_guest.sql');
 const INSERT_LOYALTY_MEMBER_SQL = loadSqlCommand('customers/insert_loyalty_member.sql');
 const INSERT_CUSTOMER_SQL = loadSqlCommand('customers/insert_customer.sql');
@@ -19,6 +20,108 @@ const UPDATE_CUSTOMER_BASE_SQL = loadSqlCommand('customers/update_customer_base.
 const COUNT_CUSTOMERS_SQL = loadSqlCommand('common/count_customers.sql');
 const COUNT_GUESTS_SQL = loadSqlCommand('common/count_guests.sql');
 const COUNT_LOYALTY_MEMBERS_SQL = loadSqlCommand('common/count_loyalty_members.sql');
+const SELECT_LOYALTY_MEMBER_ID_SQL = loadSqlCommand('customers/select_loyalty_member_id.sql');
+const UPDATE_SEASONPASS_LOYALTY_SQL = loadSqlCommand('customers/update_seasonpass_loyalty.sql');
+const SELECT_SEASON_PASSES_BY_LOYALTY_SQL = loadSqlCommand('customers/select_season_passes_by_loyalty.sql');
+const SELECT_SEASON_PASS_SPECIAL_BY_LOYALTY_SQL = loadSqlCommand('customers/select_season_pass_special_by_loyalty.sql');
+const DELETE_SEASON_PASS_SPECIAL_BY_LOYALTY_SQL = loadSqlCommand('customers/delete_season_pass_special_by_loyalty.sql');
+const DELETE_SEASON_PASSES_BY_LOYALTY_SQL = loadSqlCommand('customers/delete_season_passes_by_loyalty.sql');
+const INSERT_SEASON_PASS_SQL = loadSqlCommand('customers/insert_season_pass.sql');
+const INSERT_SEASON_PASS_SPECIAL_SQL = loadSqlCommand('customers/insert_season_pass_special.sql');
+
+const CUSTOMER_SELECTION_BASE_SQL = `
+SELECT
+    c.CustomerID,
+    c.CustomerName,
+    c.Sex,
+    TO_CHAR(c.DOB, 'YYYY-MM-DD') AS DOB,
+    TO_CHAR(g.DateOfVisit, 'YYYY-MM-DD') AS DateOfVisit,
+    lm.LoyaltyID,
+    lm.Points
+FROM Customer c
+LEFT JOIN Guest g ON g.CustomerID = c.CustomerID
+LEFT JOIN LoyaltyMember lm ON lm.CustomerID = c.CustomerID
+`;
+
+const SELECTION_ATTRIBUTE_CONFIG = {
+    CustomerID: { column: 'c.CustomerID', type: 'number' },
+    CustomerName: { column: 'c.CustomerName', type: 'string' },
+    DOB: { column: 'c.DOB', type: 'date' },
+    gender: { column: 'c.Sex', type: 'string' },
+    DateOfVisit: { column: 'g.DateOfVisit', type: 'date' },
+    loyaltyID: { column: 'lm.LoyaltyID', type: 'number' },
+    points: { column: 'lm.Points', type: 'number' }
+};
+
+const SELECTION_OPERATOR_MAP = {
+    eq: '=',
+    ne: '<>',
+    lt: '<',
+    gt: '>',
+    leq: '<=',
+    geq: '>='
+};
+
+function formatDate(value) {
+    if (!value) {
+        return null;
+    }
+    if (value instanceof Date) {
+        return value.toISOString().slice(0, 10);
+    }
+    return value;
+}
+
+function buildSelectionCondition(rule, index, bindParams) {
+    const config = SELECTION_ATTRIBUTE_CONFIG[rule.attribute];
+    if (!config) {
+        throw new Error(`Attribute "${rule.attribute}" is not supported.`);
+    }
+
+    const sqlOperator = SELECTION_OPERATOR_MAP[rule.operator];
+    if (!sqlOperator) {
+        throw new Error(`Operator "${rule.operator}" is not supported.`);
+    }
+
+    if (config.type === 'string' && !(rule.operator === 'eq' || rule.operator === 'ne')) {
+        throw new Error(`Operator "${rule.operator}" is not allowed for attribute ${rule.attribute}.`);
+    }
+
+    const bindKey = `selectionValue${index}`;
+    let bindValue = rule.value;
+    let condition;
+
+    if (config.type === 'number') {
+        const numericValue = Number(rule.value);
+        if (Number.isNaN(numericValue)) {
+            throw new Error(`Value for ${rule.attribute} must be a number.`);
+        }
+        bindValue = numericValue;
+        condition = `${config.column} ${sqlOperator} :${bindKey}`;
+    } else if (config.type === 'date') {
+        if (!rule.value || typeof rule.value !== 'string') {
+            throw new Error(`Value for ${rule.attribute} must be a date string (YYYY-MM-DD).`);
+        }
+        condition = `${config.column} ${sqlOperator} TO_DATE(:${bindKey}, 'YYYY-MM-DD')`;
+    } else {
+        condition = `${config.column} ${sqlOperator} :${bindKey}`;
+    }
+
+    bindParams[bindKey] = bindValue;
+    return condition;
+}
+
+async function updateSeasonPassLoyalty(connection, oldLoyaltyID, newLoyaltyID) {
+    if (!oldLoyaltyID || !newLoyaltyID || oldLoyaltyID === newLoyaltyID) {
+        return;
+    }
+
+    await connection.execute(
+        UPDATE_SEASONPASS_LOYALTY_SQL,
+        { oldLoyaltyID, newLoyaltyID },
+        { autoCommit: false }
+    );
+}
 
 async function fetchCustomers() {
     return await withOracleDB(async (connection) => {
@@ -48,8 +151,32 @@ async function fetchCustomerProfiles() {
 
 async function fetchGuestVisits() {
     return await withOracleDB(async (connection) => {
-        const result = await connection.execute(SELECT_GUEST_VISITS_SQL);
-        return result.rows;
+        const result = await connection.execute(SELECT_GUEST_VISITS_SQL, [], {
+            outFormat: oracledb.OUT_FORMAT_OBJECT
+        });
+
+        return result.rows.map((row) => ({
+            customerID: row.CUSTOMERID,
+            customerName: row.CUSTOMERNAME,
+            dateOfVisit: formatDate(row.DATEOFVISIT)
+        }));
+    }).catch(() => []);
+}
+
+async function fetchLoyaltyMembers() {
+    return await withOracleDB(async (connection) => {
+        const result = await connection.execute(SELECT_LOYALTY_MEMBERS_SQL, [], {
+            outFormat: oracledb.OUT_FORMAT_OBJECT
+        });
+
+        return result.rows.map((row) => ({
+            customerID: row.CUSTOMERID,
+            customerName: row.CUSTOMERNAME,
+            sex: row.SEX,
+            dateOfBirth: formatDate(row.DATEOFBIRTH),
+            loyaltyID: row.LOYALTYID,
+            points: row.POINTS
+        }));
     }).catch(() => []);
 }
 
@@ -177,6 +304,14 @@ async function updateCustomerDetails(customerID, updates = {}) {
             return false;
         }
 
+        let currentLoyaltyID = null;
+        const loyaltyLookup = await connection.execute(SELECT_LOYALTY_MEMBER_ID_SQL, {
+            customerID: numericCustomerID
+        });
+        if (loyaltyLookup.rows.length) {
+            currentLoyaltyID = loyaltyLookup.rows[0][0];
+        }
+
         let didUpdate = false;
 
         try {
@@ -286,6 +421,62 @@ async function updateCustomerDetails(customerID, updates = {}) {
     });
 }
 
+async function runCustomerSelection(rules = []) {
+    if (!Array.isArray(rules) || !rules.length) {
+        throw new Error('At least one selection condition is required.');
+    }
+
+    const bindParams = {};
+    const normalizedConditions = [];
+
+    rules.forEach((rule, index) => {
+        const attribute = rule?.attribute;
+        const operator = rule?.operator;
+        const value = typeof rule?.value === 'string' ? rule.value.trim() : rule?.value;
+
+        if (!attribute || !operator || value === undefined || value === null || value === '') {
+            throw new Error('Each rule must include an attribute, operator, and value.');
+        }
+
+        const condition = buildSelectionCondition({ attribute, operator, value }, index, bindParams);
+        const connector = (rule.connector || 'and').toLowerCase() === 'or' ? 'OR' : 'AND';
+
+        normalizedConditions.push({ condition, connector });
+    });
+
+    if (!normalizedConditions.length) {
+        throw new Error('No valid rules were provided.');
+    }
+
+    const whereClause = normalizedConditions
+        .map((entry, index) => {
+            const clause = `(${entry.condition})`;
+            if (index === normalizedConditions.length - 1) {
+                return clause;
+            }
+            return `${clause} ${entry.connector}`;
+        })
+        .join(' ');
+
+    const selectionSql = `${CUSTOMER_SELECTION_BASE_SQL} WHERE ${whereClause} ORDER BY c.CustomerID`;
+
+    return await withOracleDB(async (connection) => {
+        const result = await connection.execute(selectionSql, bindParams, {
+            outFormat: oracledb.OUT_FORMAT_OBJECT
+        });
+
+        return result.rows.map((row) => ({
+            customerID: row.CUSTOMERID,
+            customerName: row.CUSTOMERNAME,
+            sex: row.SEX,
+            dateOfBirth: row.DOB,
+            dateOfVisit: row.DATEOFVISIT,
+            loyaltyID: row.LOYALTYID,
+            loyaltyPoints: row.POINTS
+        }));
+    });
+}
+
 async function runCountQuery(sql) {
     return await withOracleDB(async (connection) => {
         const result = await connection.execute(sql);
@@ -319,10 +510,12 @@ module.exports = {
     fetchCustomers,
     fetchCustomerProfiles,
     fetchGuestVisits,
+    fetchLoyaltyMembers,
     insertCustomer,
     deleteCustomer,
     deleteLoyaltyMembership,
     updateCustomerDetails,
+    runCustomerSelection,
     countCustomers,
     countGuests,
     countLoyaltyMembers,

@@ -65,7 +65,7 @@ export async function updateCustomerName(event) {
     const messageElement = document.getElementById('updateNameResultMsg');
 
     if (!customerIDValue) {
-        messageElement.textContent = 'Please select a customer tuple before updating.';
+        messageElement.textContent = 'Please select a loyalty member tuple before updating.';
         return;
     }
 
@@ -73,10 +73,8 @@ export async function updateCustomerName(event) {
     const newName = document.getElementById('updateCustomerNewName').value.trim();
     const newDob = document.getElementById('updateCustomerDob').value;
     const newSex = document.getElementById('updateCustomerSex').value.trim();
-    const visitDate = document.getElementById('updateCustomerVisitDate').value;
     const loyaltyIdValue = document.getElementById('updateCustomerLoyaltyId').value.trim();
     const loyaltyPointsValue = document.getElementById('updateCustomerLoyaltyPoints').value;
-    const membershipRadio = document.querySelector('input[name="updateMembershipType"]:checked');
     const cachedProfile = getCachedProfile(customerIDValue);
 
     if (newName) {
@@ -89,33 +87,23 @@ export async function updateCustomerName(event) {
         payload.sex = newSex;
     }
 
-    if (membershipRadio) {
-        payload.membershipType = membershipRadio.value;
-        if (membershipRadio.value === 'guest') {
-            if (visitDate) {
-                payload.dateOfVisit = visitDate;
-            } else if (cachedProfile && cachedProfile.membershipType !== 'guest') {
-                messageElement.textContent = 'Provide a visit date when converting a loyalty member to a guest.';
-                return;
-            }
-        } else if (membershipRadio.value === 'loyalty') {
-            if (!loyaltyIdValue) {
-                messageElement.textContent = 'Provide a Loyalty ID for loyalty members.';
-                return;
-            }
-            payload.loyaltyID = loyaltyIdValue;
-            if (loyaltyPointsValue !== '') {
-                const parsedPoints = Number(loyaltyPointsValue);
-                if (Number.isNaN(parsedPoints) || parsedPoints < 0) {
-                    messageElement.textContent = 'Points must be a non-negative number.';
-                    return;
-                }
-                payload.loyaltyPoints = parsedPoints;
-            }
-        }
-    } else if (visitDate || loyaltyIdValue || loyaltyPointsValue) {
-        messageElement.textContent = 'Select a membership type to apply these changes.';
+    if (!loyaltyIdValue) {
+        messageElement.textContent = 'Provide a Loyalty ID for the selected member.';
         return;
+    }
+    if (!cachedProfile || cachedProfile.loyaltyID !== loyaltyIdValue) {
+        payload.loyaltyID = loyaltyIdValue;
+    }
+
+    if (loyaltyPointsValue !== '') {
+        const parsedPoints = Number(loyaltyPointsValue);
+        if (Number.isNaN(parsedPoints) || parsedPoints < 0) {
+            messageElement.textContent = 'Points must be a non-negative number.';
+            return;
+        }
+        if (!cachedProfile || Number(cachedProfile.loyaltyPoints) !== parsedPoints) {
+            payload.loyaltyPoints = parsedPoints;
+        }
     }
 
     if (!Object.keys(payload).length) {

@@ -1,5 +1,5 @@
 import { getUpdateCustomerCache, setCustomerProfilesCache, getCustomerProfilesCache } from './state.js';
-import { clearUpdateFormFields, setFieldValue, setMembershipRadio, updateMembershipFieldVisibility, setUpdateSelectMessage } from './domHelpers.js';
+import { clearUpdateFormFields, setFieldValue, setUpdateSelectMessage } from './domHelpers.js';
 import { renderCustomerTable } from './tableRenderer.js';
 
 function normalizeCustomerProfile(customerRow = {}) {
@@ -54,31 +54,35 @@ export function updateCustomerSelectOptions(customers) {
     cache.clear();
     select.innerHTML = '';
 
-    if (!Array.isArray(customers) || !customers.length) {
-        setUpdateSelectMessage('No customer tuples available. Insert data first.');
+    const normalizedProfiles = Array.isArray(customers)
+        ? customers
+            .map((row) => normalizeCustomerProfile(row))
+            .filter((profile) => profile.membershipType === 'loyalty')
+        : [];
+
+    if (!normalizedProfiles.length) {
+        setUpdateSelectMessage('No loyalty members available. Insert data first.');
         return;
     }
 
     select.disabled = false;
     const placeholderOption = document.createElement('option');
     placeholderOption.value = '';
-    placeholderOption.textContent = 'Select a customer...';
+    placeholderOption.textContent = 'Select a loyalty member...';
     select.appendChild(placeholderOption);
 
-    customers.forEach((customerRow) => {
-        const normalized = normalizeCustomerProfile(customerRow);
-        if (normalized.customerID === undefined || normalized.customerID === null) {
+    normalizedProfiles.forEach((profile) => {
+        if (profile.customerID === undefined || profile.customerID === null) {
             return;
         }
 
-        const idString = String(normalized.customerID);
-        cache.set(idString, normalized);
+        const idString = String(profile.customerID);
+        cache.set(idString, profile);
 
         const option = document.createElement('option');
         option.value = idString;
-        const displayName = normalized.customerName || 'Unnamed';
-        const badge = normalized.membershipType === 'loyalty' ? 'Loyalty' : 'Guest';
-        option.textContent = `#${idString} - ${displayName} (${badge})`;
+        const displayName = profile.customerName || 'Unnamed';
+        option.textContent = `#${idString} - ${displayName}`;
         select.appendChild(option);
     });
 
@@ -86,10 +90,9 @@ export function updateCustomerSelectOptions(customers) {
         hiddenInput.value = '';
     }
     if (detailsElement) {
-        detailsElement.textContent = 'Select a customer to view their current details.';
+           detailsElement.textContent = 'Select a loyalty member to view their current details.';
     }
     clearUpdateFormFields();
-    updateMembershipFieldVisibility(null);
 }
 
 export async function loadCustomerProfilesForUpdate() {
@@ -116,14 +119,14 @@ export async function loadCustomerProfilesForUpdate() {
             setCustomerProfilesCache([]);
             renderCustomerTable([]);
             if (select) {
-                setUpdateSelectMessage(data.message || 'Unable to load customer tuples.');
+                setUpdateSelectMessage(data.message || 'Unable to load loyalty member tuples.');
             }
         }
     } catch (error) {
         setCustomerProfilesCache([]);
         renderCustomerTable([]);
         if (select) {
-            setUpdateSelectMessage('Error loading customer tuples.');
+            setUpdateSelectMessage('Error loading loyalty member tuples.');
         }
     }
 }
@@ -145,10 +148,9 @@ export function handleCustomerSelectionChange() {
 
     if (!selectedId) {
         if (detailsElement) {
-            detailsElement.textContent = 'Select a customer to view their current details.';
+               detailsElement.textContent = 'Select a loyalty member to view their current details.';
         }
         clearUpdateFormFields();
-        updateMembershipFieldVisibility(null);
         return;
     }
 
@@ -158,41 +160,22 @@ export function handleCustomerSelectionChange() {
             detailsElement.textContent = `Selected CustomerID: ${selectedId}`;
         }
         clearUpdateFormFields();
-        updateMembershipFieldVisibility(null);
         return;
     }
 
     setFieldValue('updateCustomerNewName', customer.customerName || '');
     setFieldValue('updateCustomerDob', customer.dateOfBirth || '');
     setFieldValue('updateCustomerSex', customer.sex || '');
-
-    const membershipType = customer.membershipType === 'loyalty' ? 'loyalty' : 'guest';
-    setMembershipRadio(membershipType);
-
-    if (membershipType === 'guest') {
-        setFieldValue('updateCustomerVisitDate', customer.dateOfVisit || '');
-        setFieldValue('updateCustomerLoyaltyId', '');
-        setFieldValue('updateCustomerLoyaltyPoints', '');
-    } else {
-        setFieldValue('updateCustomerVisitDate', '');
-        setFieldValue('updateCustomerLoyaltyId', customer.loyaltyID);
-        setFieldValue('updateCustomerLoyaltyPoints', customer.loyaltyPoints ?? '');
-    }
+    setFieldValue('updateCustomerLoyaltyId', customer.loyaltyID || '');
+    setFieldValue('updateCustomerLoyaltyPoints', customer.loyaltyPoints ?? '');
 
     if (detailsElement) {
         const nameLabel = customer.customerName || 'Unnamed';
         const sexLabel = customer.sex || 'Unknown sex';
         const dobLabel = customer.dateOfBirth || 'Unknown DOB';
-        const typeLabel = membershipType === 'loyalty' ? 'Loyalty Member' : 'Guest';
-        detailsElement.textContent = `Selected tuple: #${selectedId} - ${nameLabel} (${typeLabel}, ${sexLabel}, DOB: ${dobLabel})`;
+        const loyaltyLabel = customer.loyaltyID ? `Loyalty ID: ${customer.loyaltyID}` : 'Missing Loyalty ID';
+        detailsElement.textContent = `Selected loyalty member: #${selectedId} - ${nameLabel} (${sexLabel}, DOB: ${dobLabel}, ${loyaltyLabel})`;
     }
-}
-
-export function handleMembershipTypeChange(event) {
-    if (!event || !event.target) {
-        return;
-    }
-    updateMembershipFieldVisibility(event.target.value);
 }
 
 export function getCachedProfile(customerId) {
