@@ -16,6 +16,22 @@
             display: none; 
             /* hides all query sections on initial page load */
         }
+
+        .projection-checkbox-row {
+            display: flex;
+            flex-wrap: wrap;
+            gap: 12px;
+            margin-bottom: 12px;
+        }
+
+        .projection-checkbox-option {
+            display: flex;
+            align-items: center;
+            gap: 6px;
+            border: 1px solid #ccc;
+            border-radius: 4px;
+            padding: 6px 10px;
+        }
     </style>
     <!-- ===================================================================================== -->
     <!-- Display the current status of the database connection. 
@@ -93,18 +109,19 @@
 
     <div id="nav">
         <p style="display:inline">Click on the query you'd like to expand      </p>
-        <button data-show="q1">Query 1</button>
-        <button data-show="q2">Query 2</button>
-        <button data-show="q3">Query 3</button>
-        <button data-show="q4">Query 4</button>
-        <button data-show="q5">Query 5</button>
-        <button data-show="q6">Query 6</button>
-        <button data-show="q7">Query 7</button>
-        <button data-show="q8">Query 8</button>
-        <button data-show="q9">Query 9</button>
-        <button data-show="q10">Query 10</button>
+        <button data-show="q1">Create New Customer (Q1)</button>
+        <button data-show="q2">Update Loyalty Member (Q2)</button>
+        <button data-show="q3">Delete a Customer (Q3)</button>
+        <button data-show="q4">Filter Customers (Q4)</button>
+        <button data-show="q5">Filter Customer Columns (Q5)</button>
+        <button data-show="q6">Find Riders of a Ride (Q6)</button>
+        <button data-show="q7">Find Loyalty Points by Gender (Q7)</button>
+        <button data-show="q8">Find Monthly Guest Numbers(Q8)</button>
+        <button data-show="q9">Find Minimum Average Points by Birth Year (Q9)</button>
+        <button data-show="q10">Find Customers Who Have Ridden Every Ride (Q10)</button>
     </div>
-    <h3>Query 1: INSERT Values into Customer </h3>
+    <h3>Create New Customer</h3>
+    <h4>(Query 1: INSERT Values into Customer)</h4>
     <div id="q1" class = "page">
         <form id="insertCustomerForm">
             CustomerID: <input type="number" id="insertCustomerId" placeholder="Enter ID" required> <br><br>
@@ -120,8 +137,6 @@
             LoyaltyID: <input type="text" id="insertLoyaltyId" placeholder="Enter Loyalty ID" maxlength="20"> <br><br>
             Points: <input type="number" id="insertPoints" placeholder="Enter Points" maxlength="20"> <br><br> 
             <!--Do we want to let this be entered, or just initialize to zero? -->
-            <b><em>Do we want to let this be entered, or just initialize to zero?</em></b>
-
             <button type="submit"> insert </button> <br>
         </form>
     </div>
@@ -130,7 +145,8 @@
 
     <hr> <!-- ========================================================================= -->
 
-    <h3>Query 2: UPDATE Values in Loyalty Member </h3>
+    <h3>Update Loyalty Member Information</h3>
+    <h4>(Query 2: UPDATE Values in Loyalty Member)</h4>
     <div id="q2" class = "page">
         <h2>Update Loyalty Member Details</h2>
         <p>Select a loyalty member tuple below to edit non-key attributes.</p>
@@ -170,12 +186,13 @@
 
     <hr> <!-- ========================================================================= -->
 
-    <h3>Query 3: DELETE Values in Loyalty Member </h3>
+    <h3>Delete a Customer</h3>
+    <h4>(Query 3: DELETE Values in Customer)</h4>
     <div id="q3" class = "page">
 
         <form id="deleteLoyaltyMemberForm">
     <!--Supposed to display available Customers/Loyalty members so that user can select -->
-            Delete Entry for Loyalty Member with LoyaltyID: <input type="number" id="insertId" placeholder="Enter ID" required> <br><br>
+            Delete Entry for Customer with CustomerID: <input type="number" id="deleteCustomerId" placeholder="Enter Customer ID" required> <br><br>
 
             <button type="submit"> Confirm Deletion </button> <br>
         </form>
@@ -185,7 +202,8 @@
 
     <hr> <!-- ========================================================================= -->
 
-    <h3>Query 4: Selection in Customer </h3>
+    <h3>Filter Customers</h3>
+    <h4>(Query 4: Selection in Customer)</h4> 
     <div id="q4" class = "page">
 
     <form id="customerSelectionForm">
@@ -288,32 +306,51 @@
 
     <hr> <!-- ========================================================================= -->
 
-    <h3>Query 5: Projection on Customer </h3>
+    <h3>Filter Customers</h3>
+    <h4>(Query 5: Projection on Customer)</h4> 
     <div id="q5" class = "page">
         <form id="customerProjectionForm">
-            <p>Check the boxes next to the attributes you would like to view from all Customers</p>
-            <label for="customerIdCheckbox">CustomerID</label><input type="checkbox" id="customerIdCheckbox" name="customerIdCheckbox"><br><br>
+            <p>Select the customer attributes to project. Results will render below without changing the summary tables above.</p>
+            <div class="projection-checkbox-row">
+                <label class="projection-checkbox-option" for="customerIdCheckbox">
+                    <input type="checkbox" id="customerIdCheckbox" name="customerIdCheckbox">
+                    Customer ID
+                </label>
+                <label class="projection-checkbox-option" for="customerNameCheckbox">
+                    <input type="checkbox" id="customerNameCheckbox" name="customerNameCheckbox">
+                    Customer Name
+                </label>
+                <label class="projection-checkbox-option" for="sexCheckbox">
+                    <input type="checkbox" id="sexCheckbox" name="sexCheckbox">
+                    Sex
+                </label>
+                <label class="projection-checkbox-option" for="dobCheckbox">
+                    <input type="checkbox" id="dobCheckbox" name="dobCheckbox">
+                    Date of Birth
+                </label>
+                <label class="projection-checkbox-option" for="dateofvisitcheckbox">
+                    <input type="checkbox" id="dateofvisitcheckbox" name="dateofvisitcheckbox">
+                    Date of Visit
+                </label>
+                <label class="projection-checkbox-option" for="loyaltyIDCheckbox">
+                    <input type="checkbox" id="loyaltyIDCheckbox" name="loyaltyIDCheckbox">
+                    Loyalty ID
+                </label>
+                <label class="projection-checkbox-option" for="pointsCheckbox">
+                    <input type="checkbox" id="pointsCheckbox" name="pointsCheckbox">
+                    Points
+                </label>
+            </div>
 
-        <label for="customerNameCheckbox">Customer Name</label><input type="checkbox" id="customerNameCheckbox" name="customerNameCheckbox"> <br><br> 
-
-        <label for="sexCheckbox">Sex</label> <input type="checkbox" id="sexCheckbox" name="sexCheckbox"><br><br>
-
-        <label for="dobCheckbox">Date of Birth</label><input type="checkbox" id="dobCheckbox" name="dobCheckbox"><br><br>
-
-            <label for="dateofvisitcheckbox">Date of Visit</label><input type="checkbox" id="dateofvisitcheckbox" name="dateofvisitcheckbox"><br><br>
-
-            <label for="loyaltyIDCheckbox">Loyalty ID</label><input type="checkbox" id="loyaltyIDCheckbox" name="loyaltyIDCheckbox"><br><br>
-
-            <label for="pointsCheckbox">Points</label><input type="checkbox" id="pointsCheckbox" name="pointsCheckbox"><br><br>
-        
-            <button type="submit">Confirm Selection</button><br>
+            <button type="submit">Run Query 5</button><br>
         </form>
+        <div id="customerProjectionResult" class="query-result"></div>
     </div>
-    <div id="insertResultMsg"></div>
 
     <hr> <!-- ========================================================================= -->
 
-    <h3>Query 6: Join: Find all the Names and Customer Statuses (Guest or LoyaltyMember) of customers that have or have had tickets for a user specified ride.  </h3>
+    <h3>Find Riders of a Ride</h3>
+    <h4>(Query 6: Join: Find Names and Customer Types of customers connected to tickets for a ride)</h4> 
     <div id="q6" class = "page">
         <form id="customerRideJoinForm">
             <label for="rideSelect">Select a ride:</label>
@@ -330,7 +367,8 @@
 
     <hr> <!-- ========================================================================= -->
 
-    <h3>Query 7: Aggregation with GROUP BY: Average Number of Points Grouped by Gender/Sex </h3>
+    <h3>Find Average Loyalty Points For Each Gender</h3>
+    <h4>(Query 7: Aggregation with GROUP BY: Average Number of Points Grouped by Gender/Sex)</h4> 
     <div id="q7" class = "page">
         <form id="avgPointsByGenderForm">
             <button type="submit">Run query</button><br></br>
@@ -341,7 +379,8 @@
 
     <hr> <!-- ========================================================================= -->
 
-    <h3>Query 8: Aggregation with HAVING:  Count number of Guests that visited GROUPED BY Month. </h3>
+    <h3>Find Monthly Guest Numbers</h3>
+    <h4>(Query 8: Aggregation with HAVING: Count number of Guests that visited GROUPED BY Month HAVING COUNT(*) > 1)</h4> 
     <div id="q8" class = "page">
         <form id="guestVisitsByMonthForm">
             <button type="submit">Run query</button><br></br>
@@ -352,18 +391,20 @@
 
     <hr> <!-- ========================================================================= -->
 
-    <h3>Query 9: Nested Aggregation with GROUP BY: Year of Birth with the Minimum Average number of Points grouped by Year of Birth (Which birth year has the lowest average number of points)</h3>
+    <h3>Find the Minimum Average Points by Birth Year</h3>
+    <h4>(Query 9: Nested Aggregation with GROUP BY: Year of Birth with the Minimum Average number of Points grouped by Year of Birth [Which birth year has the lowest average number of points] )</h4> 
     <div id="q9" class = "page">
         <form id="minAvgPointsByBirthYearForm">
             <!-- <p>Show data relevant for query button: </p><button type="submit"></button> -->
             <button type="submit">Run query</button><br></br>        
         </form>
+        <div id="minAvgPointsByBirthYearResult" class="query-result"></div>
     </div>
-    <div id="minAvgPointsByBirthYearResult" class="query-result"></div>
 
     <hr> <!-- ========================================================================= -->
 
-    <h3>Query 10: Division -- Customers that have Rode all Rides </h3>
+    <h3>Find Customers Who Rode Every Ride</h3>
+    <h4>(Query 10: Division -- Customers that have Rode all Rides)</h4> 
     <div id="q10" class = "page">
         <form id="customersAllRidesForm">
             <button type="submit">Run query</button><br></br>
@@ -385,12 +426,6 @@
                 // Show the selected page
                 const targetPage = document.getElementById(targetId);
                 if (targetPage) targetPage.style.display = "block";
-
-                const q5form = document.getElementById("customerProjectionForm");
-                if (q5form) {
-                    const checkboxes = q5form.querySelectorAll("input[type=checkbox]");
-                    checkboxes.forEach(cb=> cb.checked = false);
-                }
             });
         });
 

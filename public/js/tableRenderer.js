@@ -1,15 +1,5 @@
 import { CUSTOMER_COLUMN_DEFINITIONS } from './constants.js';
-import { getSelectedCustomerColumns, setSelectedCustomerColumns, getCustomerProfilesCache } from './state.js';
-
-export function syncProjectionCheckboxes() {
-    const selectedColumns = getSelectedCustomerColumns();
-    CUSTOMER_COLUMN_DEFINITIONS.forEach((column) => {
-        const checkbox = document.getElementById(column.checkboxId);
-        if (checkbox) {
-            checkbox.checked = selectedColumns.has(column.key);
-        }
-    });
-}
+import { getCustomerProfilesCache } from './state.js';
 
 export function renderCustomerTable(customers = getCustomerProfilesCache()) {
     const tableElement = document.getElementById('customersTable');
@@ -26,19 +16,7 @@ export function renderCustomerTable(customers = getCustomerProfilesCache()) {
     headerRow.innerHTML = '';
     tableBody.innerHTML = '';
 
-    const selectedColumns = getSelectedCustomerColumns();
-    const activeColumns = CUSTOMER_COLUMN_DEFINITIONS.filter((column) => selectedColumns.has(column.key));
-
-    if (!activeColumns.length) {
-        const th = document.createElement('th');
-        th.textContent = 'No columns selected';
-        headerRow.appendChild(th);
-
-        const row = tableBody.insertRow();
-        const cell = row.insertCell(0);
-        cell.textContent = 'Use the projection form to choose at least one column.';
-        return;
-    }
+    const activeColumns = CUSTOMER_COLUMN_DEFINITIONS;
 
     activeColumns.forEach((column) => {
         const th = document.createElement('th');
@@ -107,21 +85,4 @@ export function renderTableResult(elementId, columns, rows, emptyMessage) {
     table.appendChild(tbody);
 
     container.appendChild(table);
-}
-
-export function handleCustomerProjectionSubmit(event) {
-    event.preventDefault();
-
-    const updatedColumns = CUSTOMER_COLUMN_DEFINITIONS.filter((column) => {
-        const checkbox = document.getElementById(column.checkboxId);
-        return checkbox ? checkbox.checked : false;
-    }).map((column) => column.key);
-
-    if (!updatedColumns.length) {
-        alert('Select at least one column to display.');
-        return;
-    }
-
-    setSelectedCustomerColumns(updatedColumns);
-    renderCustomerTable();
 }

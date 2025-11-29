@@ -69,14 +69,38 @@ router.post('/selection', asyncHandler(async (req, res) => {
     }
 }, 'Failed to run customer selection.'));
 
-router.delete('/:customerID/loyalty', asyncHandler(async (req, res) => {
+router.post('/projection', asyncHandler(async (req, res) => {
+    const { attributes } = req.body || {};
+
+    if (!Array.isArray(attributes) || !attributes.length) {
+        return res.status(HTTP_STATUS.BAD_REQUEST).json({ success: false, message: 'Select at least one attribute.' });
+    }
+
+    try {
+        const result = await customerService.projectCustomerAttributes(attributes);
+        res.json({ success: true, data: result });
+    } catch (err) {
+        res.status(HTTP_STATUS.BAD_REQUEST).json({ success: false, message: err.message || 'Failed to run customer projection.' });
+    }
+}, 'Failed to run customer projection.'));
+
+router.delete('/loyaltymembers/:customerID', asyncHandler(async (req, res) => {
     const { customerID } = req.params;
     const removed = await customerService.deleteLoyaltyMembership(customerID);
     if (removed) {
         return res.json({ success: true, message: 'Loyalty membership deleted.' });
     }
-    res.status(HTTP_STATUS.NOT_FOUND).json({ success: false, message: 'Loyalty membership not found for that customer.' });
+    res.status(HTTP_STATUS.NOT_FOUND).json({ success: false, message: 'Customer not found for that customer ID.' });
 }, 'Failed to delete loyalty membership.'));
+
+router.delete('/guests/:customerID', asyncHandler(async (req, res) => {
+    const { customerID } = req.params;
+    const removed = await customerService.deleteGuestVisit(customerID);
+    if (removed) {
+        return res.json({ success: true, message: 'Guest visit deleted.' });
+    }
+    res.status(HTTP_STATUS.NOT_FOUND).json({ success: false, message: 'Guest visit not found for that customer ID.' });
+}, 'Failed to delete guest record.'));
 
 router.delete('/:customerID', asyncHandler(async (req, res) => {
     const { customerID } = req.params;

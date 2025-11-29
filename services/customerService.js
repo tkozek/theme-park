@@ -2,7 +2,7 @@ const { oracledb, withOracleDB, generateUuid } = require('./database');
 const { loadSqlCommand } = require('../utils/sqlLoader');
 
 const SELECT_ALL_CUSTOMERS_SQL = loadSqlCommand('customers/select_all_customers.sql');
-const SELECT_CUSTOMER_PROFILES_SQL = loadSqlCommand('customers/select_customer_profiles.sql');
+const SELECT_CUSTOMER_PROFILES_SQL = loadSqlCommand('q5/q5_select_customer_profiles.sql');
 const SELECT_GUEST_VISITS_SQL = loadSqlCommand('customers/select_guest_visits.sql');
 const SELECT_LOYALTY_MEMBERS_SQL = loadSqlCommand('customers/select_loyalty_members.sql');
 const INSERT_GUEST_SQL = loadSqlCommand('q1/q1_insert_guest.sql');
@@ -10,7 +10,7 @@ const INSERT_LOYALTY_MEMBER_SQL = loadSqlCommand('q1/q1_insert_loyalty_member.sq
 const INSERT_CUSTOMER_SQL = loadSqlCommand('q1/q1_insert_customer.sql');
 const SELECT_CUSTOMER_EXISTS_SQL = loadSqlCommand('customers/select_customer_exists.sql');
 const DELETE_CUSTOMER_SQL = loadSqlCommand('customers/delete_customer.sql');
-const DELETE_LOYALTY_MEMBER_SQL = loadSqlCommand('q3/q3_delete_loyalty_member.sql');
+const DELETE_LOYALTY_MEMBER_SQL = loadSqlCommand('q3/q3_delete_customer.sql');
 const MERGE_LOYALTY_MEMBER_PARTIAL_SQL = loadSqlCommand('q2/q2_merge_loyalty_member_partial.sql');
 const UPDATE_CUSTOMER_BASE_SQL = loadSqlCommand('q2/q2_update_customer_base.sql');
 const COUNT_CUSTOMERS_SQL = loadSqlCommand('common/count_customers.sql');
@@ -18,26 +18,9 @@ const COUNT_GUESTS_SQL = loadSqlCommand('common/count_guests.sql');
 const COUNT_LOYALTY_MEMBERS_SQL = loadSqlCommand('common/count_loyalty_members.sql');
 const SELECT_LOYALTY_MEMBER_ID_SQL = loadSqlCommand('q2/q2_select_loyalty_member_id.sql');
 const UPDATE_SEASONPASS_LOYALTY_SQL = loadSqlCommand('q2/q2_update_seasonpass_loyalty.sql');
-const SELECT_SEASON_PASSES_BY_LOYALTY_SQL = loadSqlCommand('q2/q2_select_season_passes_by_loyalty.sql');
-const SELECT_SEASON_PASS_SPECIAL_BY_LOYALTY_SQL = loadSqlCommand('q2/q2_select_season_pass_special_by_loyalty.sql');
-const DELETE_SEASON_PASS_SPECIAL_BY_LOYALTY_SQL = loadSqlCommand('q2/q2_delete_season_pass_special_by_loyalty.sql');
-const DELETE_SEASON_PASSES_BY_LOYALTY_SQL = loadSqlCommand('q2/q2_delete_season_passes_by_loyalty.sql');
-const INSERT_SEASON_PASS_SQL = loadSqlCommand('q2/q2_insert_season_pass.sql');
-const INSERT_SEASON_PASS_SPECIAL_SQL = loadSqlCommand('q2/q2_insert_season_pass_special.sql');
+const CUSTOMER_PROJECTION_COLUMNS = ['customerID', 'customerName', 'sex', 'dateOfBirth', 'dateOfVisit', 'loyaltyID', 'loyaltyPoints'];
 
-const CUSTOMER_SELECTION_BASE_SQL = `
-SELECT
-    c.CustomerID,
-    c.CustomerName,
-    c.Sex,
-    TO_CHAR(c.DOB, 'YYYY-MM-DD') AS DOB,
-    TO_CHAR(g.DateOfVisit, 'YYYY-MM-DD') AS DateOfVisit,
-    lm.LoyaltyID,
-    lm.Points
-FROM Customer c
-LEFT JOIN Guest g ON g.CustomerID = c.CustomerID
-LEFT JOIN LoyaltyMember lm ON lm.CustomerID = c.CustomerID
-`;
+const CUSTOMER_SELECTION_BASE_SQL = loadSqlCommand('q4/q4_customer_selection_base.sql');
 
 const SELECTION_ATTRIBUTE_CONFIG = {
     CustomerID: { column: 'c.CustomerID', type: 'number' },
@@ -66,6 +49,21 @@ function formatDate(value) {
         return value.toISOString().slice(0, 10);
     }
     return value;
+}
+
+function normalizeCustomerProfileRow(row = {}) {
+    const normalized = {
+        customerID: row.CUSTOMERID,
+        customerName: row.CUSTOMERNAME,
+        sex: row.SEX,
+        dateOfBirth: row.DOB,
+        dateOfVisit: row.DATEOFVISIT,
+        loyaltyID: row.LOYALTYID,
+        loyaltyPoints: row.POINTS
+    };
+
+    normalized.membershipType = normalized.loyaltyID === null || normalized.loyaltyID === undefined ? 'guest' : 'loyalty';
+    return normalized;
 }
 
 function buildSelectionCondition(rule, index, bindParams) {
@@ -132,16 +130,7 @@ async function fetchCustomerProfiles() {
             outFormat: oracledb.OUT_FORMAT_OBJECT
         });
 
-        return result.rows.map((row) => ({
-            customerID: row.CUSTOMERID,
-            customerName: row.CUSTOMERNAME,
-            sex: row.SEX,
-            dateOfBirth: row.DOB,
-            dateOfVisit: row.DATEOFVISIT,
-            loyaltyID: row.LOYALTYID,
-            loyaltyPoints: row.POINTS,
-            membershipType: row.LOYALTYID === null || row.LOYALTYID === undefined ? 'guest' : 'loyalty'
-        }));
+        return result.rows.map((row) => normalizeCustomerProfileRow(row));
     }).catch(() => []);
 }
 
@@ -174,6 +163,35 @@ async function fetchLoyaltyMembers() {
             points: row.POINTS
         }));
     }).catch(() => []);
+}
+
+async function projectCustomerAttributes(attributes = []) {
+    if (!Array.isArray(attributes) || !attributes.length) {
+        throw new Error('Select at least one attribute to run the projection.');
+    }
+
+    const normalizedAttributes = attributes
+        .map((attribute) => (typeof attribute === 'string' ? attribute.trim() : ''))
+        .filter((attribute, index, self) => attribute && self.indexOf(attribute) === index && CUSTOMER_PROJECTION_COLUMNS.includes(attribute));
+
+    if (!normalizedAttributes.length) {
+        throw new Error('No valid projection attributes were provided.');
+    }
+
+    return await withOracleDB(async (connection) => {
+        const result = await connection.execute(SELECT_CUSTOMER_PROFILES_SQL, [], {
+            outFormat: oracledb.OUT_FORMAT_OBJECT
+        });
+
+        const normalizedRows = result.rows.map((row) => normalizeCustomerProfileRow(row));
+        return normalizedRows.map((row) => {
+            const projected = {};
+            normalizedAttributes.forEach((attribute) => {
+                projected[attribute] = row[attribute];
+            });
+            return projected;
+        });
+    });
 }
 
 function validateCustomerRole({ dateOfVisit, loyaltyID }) {
@@ -272,11 +290,28 @@ async function deleteCustomer(customerID) {
     });
 }
 
-async function deleteLoyaltyMembership(customerID) {
+async function deleteCustomer(customerID) {
     return await withOracleDB(async (connection) => {
         const numericCustomerID = ensureNumericCustomerId(customerID);
         const result = await connection.execute(
             DELETE_LOYALTY_MEMBER_SQL,
+            { customerID: numericCustomerID },
+            { autoCommit: true }
+        );
+        return result.rowsAffected && result.rowsAffected > 0;
+    }).catch((err) => {
+        if (err && err.message) {
+            throw err;
+        }
+        return false;
+    });
+}
+
+async function deleteGuestVisit(customerID) {
+    return await withOracleDB(async (connection) => {
+        const numericCustomerID = ensureNumericCustomerId(customerID);
+        const result = await connection.execute(
+            DELETE_GUEST_SQL,
             { customerID: numericCustomerID },
             { autoCommit: true }
         );
@@ -476,7 +511,9 @@ module.exports = {
     fetchLoyaltyMembers,
     insertCustomer,
     deleteCustomer,
-    deleteLoyaltyMembership,
+    deleteLoyaltyMembership: deleteCustomer,
+    deleteGuestVisit,
+    projectCustomerAttributes,
     updateCustomerDetails,
     runCustomerSelection,
     countCustomers,

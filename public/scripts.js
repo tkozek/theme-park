@@ -1,5 +1,5 @@
 import { checkDbConnection } from './js/dbStatus.js';
-import { syncProjectionCheckboxes, handleCustomerProjectionSubmit } from './js/tableRenderer.js';
+import { handleCustomerProjectionSubmit, initializeProjectionForm } from './js/customerProjection.js';
 import { handleCustomerSelectionChange } from './js/customerProfiles.js';
 import { insertCustomer, updateCustomerName, deleteLoyaltyMembership } from './js/customerForms.js';
 import { resetSchema, dropAndCreateSchema, populateSeedData } from './js/schemaControls.js';
@@ -30,8 +30,8 @@ function attachSubmitListener(id, handler) {
 
 document.addEventListener('DOMContentLoaded', () => {
     checkDbConnection();
-    refreshCustomers().finally(syncProjectionCheckboxes);
-    syncProjectionCheckboxes();
+    refreshCustomers();
+    initializeProjectionForm();
     initializeRideDropdown();
 
     attachClickListener('resetSchemaButton', resetSchema);

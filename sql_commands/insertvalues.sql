@@ -411,8 +411,6 @@ insert into maintenancerecord2 values ( 'HauntedHouse', 1, 'Structural Check', t
 insert into maintenancerecord2 values ( 'LogFlume', 1, 'Electrical Test', to_date('2025-04-11','YYYY-MM-DD') );
 insert into maintenancerecord2 values ( 'BumperCars', 1, 'Safety Audit', to_date('2025-05-22','YYYY-MM-DD') );
 
-
-
 -- CustomerID 1 riding all rides (Alice Johnson)
 insert into forride values ( 'RollerCoaster', 5001 );
 insert into forride values ( 'FerrisWheel', 5112 );
@@ -428,7 +426,6 @@ insert into forride values ( 'HauntedHouse', 6668 );
 insert into forride values ( 'LogFlume', 6669 );
 insert into forride values ( 'BumperCars', 6670 );
 
-
 -- Customer 2 riding 3 rides (Bob Smith)
 insert into forride values ( 'FerrisWheel', 5002 );
 insert into forride values ( 'LogFlume', 3333 );
@@ -441,13 +438,8 @@ insert into forride values ( 'HauntedHouse', 8888 );
 insert into forride values ( 'LogFlume', 8889 );
 insert into forride values ( 'BumperCars', 8890 );
 
-
 insert into forride values ( 'HauntedHouse', 5003 );
-
-
 insert into forride values ( 'LogFlume', 5004 );
-
-
 insert into forride values ( 'BumperCars', 5005 );
 
 

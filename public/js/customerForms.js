@@ -134,8 +134,8 @@ export async function updateCustomerName(event) {
 export async function deleteLoyaltyMembership(event) {
     event.preventDefault();
 
-    const customerIdInput = document.getElementById('deleteCustomerId') || document.getElementById('insertId');
-    const customerIDValue = customerIdInput ? customerIdInput.value : '';
+    const customerIdInput = document.getElementById('deleteCustomerId');
+    const customerIDValue = customerIdInput ? customerIdInput.value.trim() : '';
     const messageElement = document.getElementById('deleteResultMsg');
     const setMessage = (text) => {
         if (messageElement) {
@@ -149,13 +149,13 @@ export async function deleteLoyaltyMembership(event) {
     }
 
     try {
-        const response = await fetch(`/customers/${customerIDValue}/loyalty`, {
+            const response = await fetch(`/customers/loyaltymembers/${encodeURIComponent(customerIDValue)}`, {
             method: 'DELETE'
         });
 
         const responseData = await response.json();
         if (response.ok && responseData.success) {
-            setMessage('Loyalty membership deleted successfully!');
+            setMessage('Customer deleted successfully!');
             await refreshCustomers();
         } else {
             setMessage(responseData.message || 'Error deleting loyalty membership!');
