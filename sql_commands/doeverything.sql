@@ -5,6 +5,9 @@ BEGIN
 END;
 /
 
+-- 1. Table Initializations
+
+-- should 
 CREATE TABLE Ride (
   RideName      VARCHAR2(255) PRIMARY KEY,
   Capacity      INTEGER,      
@@ -163,6 +166,7 @@ CREATE TABLE SeasonPass1 (
   PRIMARY KEY (SeasonPassLevel, SeasonStart),
   CONSTRAINT fk_seasonpass2 FOREIGN KEY (SeasonPassLevel, SeasonStart)
     REFERENCES SeasonPass2 (SeasonPassLevel, SeasonStart)
+    ON DELETE CASCADE
 );
 
 -- Should never be triggered, SeasonPass should be immutable after insertion
@@ -175,7 +179,7 @@ CREATE TABLE SeasonPassSpecial (
   PRIMARY KEY (UUID, RateCode),
   CONSTRAINT fk_sps_seasonpass FOREIGN KEY (UUID)
     REFERENCES SeasonPass2 (UUID)
-    ON DELETE SET NULL,
+    ON DELETE CASCADE,
   CONSTRAINT fk_sps_ratemodifier FOREIGN KEY (RateCode)
     REFERENCES RateModifier (RateCode)
     ON DELETE CASCADE
@@ -190,7 +194,7 @@ CREATE TABLE BookedWithRateModifier (
   PRIMARY KEY (RateCode, BookingNumber),
   CONSTRAINT fk_bwrm_rate FOREIGN KEY (RateCode)
     REFERENCES RateModifier (RateCode)
-    ON DELETE SET NULL,
+    ON DELETE CASCADE,
   CONSTRAINT fk_bwrm_booking FOREIGN KEY (BookingNumber)
     REFERENCES Booking2 (BookingNumber)
     ON DELETE CASCADE
@@ -205,7 +209,7 @@ CREATE TABLE OffersRoomType (
   PRIMARY KEY (HotelName, RoomName),
   CONSTRAINT fk_offers_hotel FOREIGN KEY (HotelName)
     REFERENCES Hotel2 (HotelName)
-    ON DELETE SET NULL,
+    ON DELETE CASCADE,
   CONSTRAINT fk_offers_room FOREIGN KEY (RoomName)
     REFERENCES RoomType2 (RoomName)
     ON DELETE SET NULL,
@@ -228,10 +232,10 @@ CREATE TABLE HotelStay (
   BookingNumber  INTEGER NOT NULL,
   CONSTRAINT fk_hs_hotel FOREIGN KEY (HotelName)
     REFERENCES Hotel2 (HotelName)
-    ON DELETE SET NULL ,
+    ON DELETE CASCADE,
   CONSTRAINT fk_hs_room FOREIGN KEY (RoomName)
     REFERENCES RoomType2 (RoomName)
-    ON DELETE SET NULL ,
+    ON DELETE CASCADE,
   CONSTRAINT fk_hs_booking FOREIGN KEY (BookingNumber)
     REFERENCES Booking2 (BookingNumber)
     ON DELETE CASCADE,
