@@ -345,8 +345,7 @@ async function updateCustomerDetails(customerID, updates = {}) {
                     {
                         customerID: numericCustomerID,
                         loyaltyID: nextLoyaltyID,
-                        loyaltyPoints: loyaltyPointsValue,
-                        uuid: generateUuid()
+                        loyaltyPoints: loyaltyPointsValue
                     },
                     { autoCommit: false }
                 );
