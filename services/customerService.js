@@ -1,7 +1,6 @@
 const { oracledb, withOracleDB, generateUuid } = require('./database');
 const { loadSqlCommand } = require('../utils/sqlLoader');
 
-const SELECT_ALL_CUSTOMERS_SQL = loadSqlCommand('customers/select_all_customers.sql');
 const SELECT_CUSTOMER_PROFILES_SQL = loadSqlCommand('q5/q5_select_customer_profiles.sql');
 const SELECT_GUEST_VISITS_SQL = loadSqlCommand('customers/select_guest_visits.sql');
 const SELECT_LOYALTY_MEMBERS_SQL = loadSqlCommand('customers/select_loyalty_members.sql');
@@ -9,7 +8,6 @@ const INSERT_GUEST_SQL = loadSqlCommand('q1/q1_insert_guest.sql');
 const INSERT_LOYALTY_MEMBER_SQL = loadSqlCommand('q1/q1_insert_loyalty_member.sql');
 const INSERT_CUSTOMER_SQL = loadSqlCommand('q1/q1_insert_customer.sql');
 const SELECT_CUSTOMER_EXISTS_SQL = loadSqlCommand('customers/select_customer_exists.sql');
-const DELETE_CUSTOMER_SQL = loadSqlCommand('customers/delete_customer.sql');
 const DELETE_LOYALTY_MEMBER_SQL = loadSqlCommand('q3/q3_delete_customer.sql');
 const MERGE_LOYALTY_MEMBER_PARTIAL_SQL = loadSqlCommand('q2/q2_merge_loyalty_member_partial.sql');
 const UPDATE_CUSTOMER_BASE_SQL = loadSqlCommand('q2/q2_update_customer_base.sql');
@@ -115,13 +113,6 @@ async function updateSeasonPassLoyalty(connection, oldLoyaltyID, newLoyaltyID) {
         { oldLoyaltyID, newLoyaltyID },
         { autoCommit: false }
     );
-}
-
-async function fetchCustomers() {
-    return await withOracleDB(async (connection) => {
-        const result = await connection.execute(SELECT_ALL_CUSTOMERS_SQL);
-        return result.rows;
-    }).catch(() => []);
 }
 
 async function fetchCustomerProfiles() {
@@ -260,58 +251,11 @@ function ensureNumericCustomerId(customerID) {
     return numericId;
 }
 
-async function deleteCustomer(customerID) {
-    return await withOracleDB(async (connection) => {
-        const numericCustomerID = ensureNumericCustomerId(customerID);
-
-        const existingCustomer = await connection.execute(SELECT_CUSTOMER_EXISTS_SQL, {
-            customerID: numericCustomerID
-        });
-        if (!existingCustomer.rows.length) {
-            return false;
-        }
-
-        try {
-            const result = await connection.execute(
-                DELETE_CUSTOMER_SQL,
-                { customerID: numericCustomerID },
-                { autoCommit: true }
-            );
-            return result.rowsAffected && result.rowsAffected > 0;
-        } catch (err) {
-            console.error('There was an error deleting the customer!', err);
-            throw err;
-        }
-    }).catch((err) => {
-        if (err && err.message) {
-            throw err;
-        }
-        return false;
-    });
-}
-
-async function deleteCustomer(customerID) {
+async function deleteLoyaltyMembership(customerID) {
     return await withOracleDB(async (connection) => {
         const numericCustomerID = ensureNumericCustomerId(customerID);
         const result = await connection.execute(
             DELETE_LOYALTY_MEMBER_SQL,
-            { customerID: numericCustomerID },
-            { autoCommit: true }
-        );
-        return result.rowsAffected && result.rowsAffected > 0;
-    }).catch((err) => {
-        if (err && err.message) {
-            throw err;
-        }
-        return false;
-    });
-}
-
-async function deleteGuestVisit(customerID) {
-    return await withOracleDB(async (connection) => {
-        const numericCustomerID = ensureNumericCustomerId(customerID);
-        const result = await connection.execute(
-            DELETE_GUEST_SQL,
             { customerID: numericCustomerID },
             { autoCommit: true }
         );
@@ -505,14 +449,11 @@ async function getCustomerStats() {
 }
 
 module.exports = {
-    fetchCustomers,
     fetchCustomerProfiles,
     fetchGuestVisits,
     fetchLoyaltyMembers,
     insertCustomer,
-    deleteCustomer,
-    deleteLoyaltyMembership: deleteCustomer,
-    deleteGuestVisit,
+    deleteLoyaltyMembership,
     projectCustomerAttributes,
     updateCustomerDetails,
     runCustomerSelection,

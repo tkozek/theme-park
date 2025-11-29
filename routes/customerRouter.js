@@ -3,11 +3,6 @@ const router = express.Router();
 const { HTTP_STATUS, asyncHandler } = require('./routeUtils');
 const customerService = require('../services/customerService');
 
-router.get('/', asyncHandler(async (req, res) => {
-    const customers = await customerService.fetchCustomers();
-    res.json({ success: true, data: customers });
-}, 'Failed to fetch customers.'));
-
 router.get('/profiles', asyncHandler(async (req, res) => {
     const profiles = await customerService.fetchCustomerProfiles();
     res.json({ success: true, data: profiles });
@@ -92,32 +87,6 @@ router.delete('/loyaltymembers/:customerID', asyncHandler(async (req, res) => {
     }
     res.status(HTTP_STATUS.NOT_FOUND).json({ success: false, message: 'Customer not found for that customer ID.' });
 }, 'Failed to delete loyalty membership.'));
-
-router.delete('/guests/:customerID', asyncHandler(async (req, res) => {
-    const { customerID } = req.params;
-    const removed = await customerService.deleteGuestVisit(customerID);
-    if (removed) {
-        return res.json({ success: true, message: 'Guest visit deleted.' });
-    }
-    res.status(HTTP_STATUS.NOT_FOUND).json({ success: false, message: 'Guest visit not found for that customer ID.' });
-}, 'Failed to delete guest record.'));
-
-router.delete('/:customerID', asyncHandler(async (req, res) => {
-    const { customerID } = req.params;
-    const deleted = await customerService.deleteCustomer(customerID);
-    if (deleted) {
-        return res.json({ success: true, message: 'Customer deleted successfully.' });
-    }
-    res.status(HTTP_STATUS.NOT_FOUND).json({ success: false, message: 'Customer not found.' });
-}, 'Failed to delete customer.'));
-
-router.get('/count', asyncHandler(async (req, res) => {
-    const count = await customerService.countCustomers();
-    if (count >= 0) {
-        return res.json({ success: true, count });
-    }
-    res.status(HTTP_STATUS.SERVER_ERROR).json({ success: false, message: 'Unable to count customers.' });
-}, 'Unable to count customers.'));
 
 router.get('/stats', asyncHandler(async (req, res) => {
     const counts = await customerService.getCustomerStats();
