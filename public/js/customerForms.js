@@ -131,7 +131,7 @@ export async function updateCustomerName(event) {
     }
 }
 
-export async function deleteLoyaltyMembership(event) {
+export async function deleteCustomer(event) {
     event.preventDefault();
 
     const customerIdInput = document.getElementById('deleteCustomerId');
@@ -144,12 +144,12 @@ export async function deleteLoyaltyMembership(event) {
     };
 
     if (!customerIDValue) {
-        setMessage('Enter a CustomerID to delete the loyalty member record.');
+        setMessage('Enter a CustomerID to delete the customer record.');
         return;
     }
 
     try {
-            const response = await fetch(`/customers/loyaltymembers/${encodeURIComponent(customerIDValue)}`, {
+        const response = await fetch(`/customers/${encodeURIComponent(customerIDValue)}`, {
             method: 'DELETE'
         });
 
@@ -158,9 +158,9 @@ export async function deleteLoyaltyMembership(event) {
             setMessage('Customer deleted successfully!');
             await refreshCustomers();
         } else {
-            setMessage(responseData.message || 'Error deleting loyalty membership!');
+            setMessage(responseData.message || 'Error deleting customer!');
         }
     } catch (error) {
-        setMessage('Error deleting loyalty membership!');
+        setMessage('Error deleting customer!');
     }
 }

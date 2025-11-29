@@ -79,18 +79,13 @@ router.post('/projection', asyncHandler(async (req, res) => {
     }
 }, 'Failed to run customer projection.'));
 
-router.delete('/loyaltymembers/:customerID', asyncHandler(async (req, res) => {
+router.delete('/:customerID', asyncHandler(async (req, res) => {
     const { customerID } = req.params;
-    const removed = await customerService.deleteLoyaltyMembership(customerID);
+    const removed = await customerService.deleteCustomer(customerID);
     if (removed) {
-        return res.json({ success: true, message: 'Loyalty membership deleted.' });
+        return res.json({ success: true, message: 'Customer deleted successfully.' });
     }
-    res.status(HTTP_STATUS.NOT_FOUND).json({ success: false, message: 'Customer not found for that customer ID.' });
-}, 'Failed to delete loyalty membership.'));
-
-router.get('/stats', asyncHandler(async (req, res) => {
-    const counts = await customerService.getCustomerStats();
-    res.json({ success: true, counts });
-}, 'Unable to fetch customer statistics.'));
+    res.status(HTTP_STATUS.NOT_FOUND).json({ success: false, message: 'Customer not found.' });
+}, 'Failed to delete customer.'));
 
 module.exports = router;

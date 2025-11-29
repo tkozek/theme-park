@@ -1,7 +1,7 @@
 import { checkDbConnection } from './js/dbStatus.js';
 import { handleCustomerProjectionSubmit, initializeProjectionForm } from './js/customerProjection.js';
 import { handleCustomerSelectionChange } from './js/customerProfiles.js';
-import { insertCustomer, updateCustomerName, deleteLoyaltyMembership } from './js/customerForms.js';
+import { insertCustomer, updateCustomerName, deleteCustomer } from './js/customerForms.js';
 import { resetSchema, dropAndCreateSchema, populateSeedData } from './js/schemaControls.js';
 import {
     initializeRideDropdown,
@@ -43,7 +43,7 @@ document.addEventListener('DOMContentLoaded', () => {
 
     attachSubmitListener('insertCustomerForm', insertCustomer);
     attachSubmitListener('updateCustomerNameForm', updateCustomerName);
-    attachSubmitListener('deleteLoyaltyMemberForm', deleteLoyaltyMembership);
+    attachSubmitListener('deleteCustomerForm', deleteCustomer);
     attachSubmitListener('customerSelectionForm', handleCustomerSelectionSubmit);
     attachSubmitListener('customerProjectionForm', handleCustomerProjectionSubmit);
     attachSubmitListener('customerRideJoinForm', handleCustomerRideJoinSubmit);

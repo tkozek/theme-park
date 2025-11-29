@@ -8,12 +8,9 @@ const INSERT_GUEST_SQL = loadSqlCommand('q1/q1_insert_guest.sql');
 const INSERT_LOYALTY_MEMBER_SQL = loadSqlCommand('q1/q1_insert_loyalty_member.sql');
 const INSERT_CUSTOMER_SQL = loadSqlCommand('q1/q1_insert_customer.sql');
 const SELECT_CUSTOMER_EXISTS_SQL = loadSqlCommand('customers/select_customer_exists.sql');
-const DELETE_LOYALTY_MEMBER_SQL = loadSqlCommand('q3/q3_delete_customer.sql');
+const DELETE_CUSTOMER_SQL = loadSqlCommand('q3/q3_delete_customer.sql');
 const MERGE_LOYALTY_MEMBER_PARTIAL_SQL = loadSqlCommand('q2/q2_merge_loyalty_member_partial.sql');
 const UPDATE_CUSTOMER_BASE_SQL = loadSqlCommand('q2/q2_update_customer_base.sql');
-const COUNT_CUSTOMERS_SQL = loadSqlCommand('common/count_customers.sql');
-const COUNT_GUESTS_SQL = loadSqlCommand('common/count_guests.sql');
-const COUNT_LOYALTY_MEMBERS_SQL = loadSqlCommand('common/count_loyalty_members.sql');
 const SELECT_LOYALTY_MEMBER_ID_SQL = loadSqlCommand('q2/q2_select_loyalty_member_id.sql');
 const UPDATE_SEASONPASS_LOYALTY_SQL = loadSqlCommand('q2/q2_update_seasonpass_loyalty.sql');
 const CUSTOMER_PROJECTION_COLUMNS = ['customerID', 'customerName', 'sex', 'dateOfBirth', 'dateOfVisit', 'loyaltyID', 'loyaltyPoints'];
@@ -251,11 +248,19 @@ function ensureNumericCustomerId(customerID) {
     return numericId;
 }
 
-async function deleteLoyaltyMembership(customerID) {
+async function deleteCustomer(customerID) {
     return await withOracleDB(async (connection) => {
         const numericCustomerID = ensureNumericCustomerId(customerID);
+
+        const existingCustomer = await connection.execute(SELECT_CUSTOMER_EXISTS_SQL, {
+            customerID: numericCustomerID
+        });
+        if (!existingCustomer.rows.length) {
+            return false;
+        }
+
         const result = await connection.execute(
-            DELETE_LOYALTY_MEMBER_SQL,
+            DELETE_CUSTOMER_SQL,
             { customerID: numericCustomerID },
             { autoCommit: true }
         );
@@ -419,46 +424,13 @@ async function runCustomerSelection(rules = []) {
     });
 }
 
-async function runCountQuery(sql) {
-    return await withOracleDB(async (connection) => {
-        const result = await connection.execute(sql);
-        return result.rows?.[0]?.[0] ?? -1;
-    }).catch(() => -1);
-}
-
-async function countCustomers() {
-    return runCountQuery(COUNT_CUSTOMERS_SQL);
-}
-
-async function countGuests() {
-    return runCountQuery(COUNT_GUESTS_SQL);
-}
-
-async function countLoyaltyMembers() {
-    return runCountQuery(COUNT_LOYALTY_MEMBERS_SQL);
-}
-
-async function getCustomerStats() {
-    const [customers, guests, loyaltyMembers] = await Promise.all([
-        countCustomers(),
-        countGuests(),
-        countLoyaltyMembers()
-    ]);
-
-    return { customers, guests, loyaltyMembers };
-}
-
 module.exports = {
     fetchCustomerProfiles,
     fetchGuestVisits,
     fetchLoyaltyMembers,
     insertCustomer,
-    deleteLoyaltyMembership,
+    deleteCustomer,
     projectCustomerAttributes,
     updateCustomerDetails,
-    runCustomerSelection,
-    countCustomers,
-    countGuests,
-    countLoyaltyMembers,
-    getCustomerStats
+    runCustomerSelection
 };
