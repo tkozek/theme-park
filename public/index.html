@@ -44,71 +44,9 @@
         <img id="loadingGif" class="loading-gif" src="loading_100px.gif" alt="Loading...">
     </h1>
 
-    <hr><br> <!-- ========================================================================= -->
-
-    <table style="width: 100%; border: none;" cellspacing="16" cellpadding="0">
-        <tr>
-            <td valign="top" style="width: 33%;">
-                <h3>Show Customers</h3>
-                <button id="refreshCustomersTableButton">Refresh Customers</button>
-                <table id="customersTable" border="1">
-                    <thead>
-                        <tr></tr>
-                    </thead>
-                    <tbody>
-                    </tbody>
-                </table>
-            </td>
-            <td valign="top" style="width: 33%;">
-                <h3>Show Loyalty Members</h3>
-                <button id="refreshLoyaltyMembersTableButton">Refresh Loyalty Members</button>
-                <table id="loyaltyMembersTable" border="1">
-                    <thead>
-                        <tr>
-                            <th>Customer ID</th>
-                            <th>Name</th>
-                            <th>Sex</th>
-                            <th>Date of Birth</th>
-                            <th>Loyalty ID</th>
-                            <th>Points</th>
-                        </tr>
-                    </thead>
-                    <tbody>
-                    </tbody>
-                </table>
-            </td>
-            <td valign="top" style="width: 33%;">
-                <h3>Show Guest Visits</h3>
-                <button id="refreshGuestVisitsTableButton">Refresh Guest Visits</button>
-                <table id="guestVisitsTable" border="1">
-                    <thead>
-                        <tr>
-                            <th>Customer ID</th>
-                            <th>Name</th>
-                            <th>Date of Visit</th>
-                        </tr>
-                    </thead>
-                    <tbody>
-                    </tbody>
-                </table>
-            </td>
-        </tr>
-    </table>
-
-    <hr> <!-- ========================================================================= -->
-
-    <h2>Schema Utilities</h2>
-    <button id="resetSchemaButton">Reset (Drop + Create + Populate)</button>
-    <button id="dropCreateButton">Drop &amp; Create Tables</button>
-    <button id="populateButton">Populate Seed Data</button>
-    <br>
-    <!-- A placeholder to display messages related to the reset operation. -->
-    <div id="resetResultMsg"></div>
-
-    <hr> <!-- ========================================================================= -->
-
     <div id="nav">
-        <p style="display:inline">Click on the query you'd like to expand      </p>
+        <p style="display:inline">Click on the query you'd like to expand</p>
+        <br>
         <button data-show="q1">Create New Customer (Q1)</button>
         <button data-show="q2">Update Loyalty Member (Q2)</button>
         <button data-show="q3">Delete a Customer (Q3)</button>
@@ -120,9 +58,11 @@
         <button data-show="q9">Find Minimum Average Points by Birth Year (Q9)</button>
         <button data-show="q10">Find Customers Who Have Ridden Every Ride (Q10)</button>
     </div>
-    <h3>Create New Customer</h3>
-    <h4>(Query 1: INSERT Values into Customer)</h4>
-    <div id="q1" class = "page">
+
+    <div id="q1" class = "page query-section">
+        <hr>
+        <h3>Create New Customer</h3>
+        <h4>(Query 1: INSERT Values into Customer)</h4>
         <form id="insertCustomerForm">
             CustomerID: <input type="number" id="insertCustomerId" placeholder="Enter ID" required> <br><br>
             CustomerName: <input type="text" id="insertCustomerName" placeholder="Enter Name" maxlength="255"> <br><br>
@@ -139,15 +79,13 @@
             <!--Do we want to let this be entered, or just initialize to zero? -->
             <button type="submit"> insert </button> <br>
         </form>
+        <div id="insertResultMsg"></div>
     </div>
-    <div id="insertResultMsg"></div>
 
-
-    <hr> <!-- ========================================================================= -->
-
-    <h3>Update Loyalty Member Information</h3>
-    <h4>(Query 2: UPDATE Values in Loyalty Member)</h4>
-    <div id="q2" class = "page">
+    <div id="q2" class = "page query-section">
+        <hr>
+        <h3>Update Loyalty Member Information</h3>
+        <h4>(Query 2: UPDATE Values in Loyalty Member)</h4>
         <h2>Update Loyalty Member Details</h2>
         <p>Select a loyalty member tuple below to edit non-key attributes.</p>
         <form id="updateCustomerNameForm">
@@ -184,11 +122,10 @@
         <div id="updateNameResultMsg"></div>
     </div>
 
-    <hr> <!-- ========================================================================= -->
-
-    <h3>Delete a Customer</h3>
-    <h4>(Query 3: DELETE Values in Customer)</h4>
-    <div id="q3" class = "page">
+    <div id="q3" class = "page query-section">
+        <hr>
+        <h3>Delete a Customer</h3>
+        <h4>(Query 3: DELETE Values in Customer)</h4>
 
         <form id="deleteLoyaltyMemberForm">
     <!--Supposed to display available Customers/Loyalty members so that user can select -->
@@ -198,13 +135,11 @@
         </form>
         <div id="deleteResultMsg" class="form-result"></div>
     </div>
-    <div id="insertResultMsg"></div>
 
-    <hr> <!-- ========================================================================= -->
-
-    <h3>Filter Customers</h3>
-    <h4>(Query 4: Selection in Customer)</h4> 
-    <div id="q4" class = "page">
+    <div id="q4" class = "page query-section">
+        <hr>
+        <h3>Filter Customers</h3>
+        <h4>(Query 4: Selection in Customer)</h4> 
 
     <form id="customerSelectionForm">
     <div id="ruleContainer">
@@ -304,11 +239,10 @@
     <div id="customerSelectionResult" class="query-result"></div>
     </div>
 
-    <hr> <!-- ========================================================================= -->
-
-    <h3>Filter Customers</h3>
-    <h4>(Query 5: Projection on Customer)</h4> 
-    <div id="q5" class = "page">
+    <div id="q5" class = "page query-section">
+        <hr>
+        <h3>Filter Customers</h3>
+        <h4>(Query 5: Projection on Customer)</h4> 
         <form id="customerProjectionForm">
             <p>Select the customer attributes to project. Results will render below without changing the summary tables above.</p>
             <div class="projection-checkbox-row">
@@ -347,11 +281,10 @@
         <div id="customerProjectionResult" class="query-result"></div>
     </div>
 
-    <hr> <!-- ========================================================================= -->
-
-    <h3>Find Riders of a Ride</h3>
-    <h4>(Query 6: Join: Find Names and Customer Types of customers connected to tickets for a ride)</h4> 
-    <div id="q6" class = "page">
+    <div id="q6" class = "page query-section">
+        <hr>
+        <h3>Find Riders of a Ride</h3>
+        <h4>(Query 6: Join: Find Names and Customer Types of customers connected to tickets for a ride)</h4> 
         <form id="customerRideJoinForm">
             <label for="rideSelect">Select a ride:</label>
             <select id="rideSelect" disabled>
@@ -363,37 +296,31 @@
         </form>
         <div id="customerRideJoinResult" class="query-result"></div>
     </div>
-    <div id="insertResultMsg"></div>
 
-    <hr> <!-- ========================================================================= -->
-
-    <h3>Find Average Loyalty Points For Each Gender</h3>
-    <h4>(Query 7: Aggregation with GROUP BY: Average Number of Points Grouped by Gender/Sex)</h4> 
-    <div id="q7" class = "page">
+    <div id="q7" class = "page query-section">
+        <hr>
+        <h3>Find Average Loyalty Points For Each Gender</h3>
+        <h4>(Query 7: Aggregation with GROUP BY: Average Number of Points Grouped by Gender/Sex)</h4> 
         <form id="avgPointsByGenderForm">
             <button type="submit">Run query</button><br></br>
         </form>
         <div id="avgPointsByGenderResult" class="query-result"></div>
     </div>
-    <div id="insertResultMsg"></div>
 
-    <hr> <!-- ========================================================================= -->
-
-    <h3>Find Monthly Guest Numbers</h3>
-    <h4>(Query 8: Aggregation with HAVING: Count number of Guests that visited GROUPED BY Month HAVING COUNT(*) > 1)</h4> 
-    <div id="q8" class = "page">
+    <div id="q8" class = "page query-section">
+        <hr>
+        <h3>Find Monthly Guest Numbers</h3>
+        <h4>(Query 8: Aggregation with HAVING: Count number of Guests that visited GROUPED BY Month HAVING COUNT(*) > 1)</h4> 
         <form id="guestVisitsByMonthForm">
             <button type="submit">Run query</button><br></br>
         </form>
         <div id="guestVisitsByMonthResult" class="query-result"></div>
     </div>
-    <div id="insertResultMsg"></div>
 
-    <hr> <!-- ========================================================================= -->
-
-    <h3>Find the Minimum Average Points by Birth Year</h3>
-    <h4>(Query 9: Nested Aggregation with GROUP BY: Year of Birth with the Minimum Average number of Points grouped by Year of Birth [Which birth year has the lowest average number of points] )</h4> 
-    <div id="q9" class = "page">
+    <div id="q9" class = "page query-section">
+        <hr>
+        <h3>Find the Minimum Average Points by Birth Year</h3>
+        <h4>(Query 9: Nested Aggregation with GROUP BY: Year of Birth with the Minimum Average number of Points grouped by Year of Birth [Which birth year has the lowest average number of points] )</h4> 
         <form id="minAvgPointsByBirthYearForm">
             <!-- <p>Show data relevant for query button: </p><button type="submit"></button> -->
             <button type="submit">Run query</button><br></br>        
@@ -401,11 +328,10 @@
         <div id="minAvgPointsByBirthYearResult" class="query-result"></div>
     </div>
 
-    <hr> <!-- ========================================================================= -->
-
-    <h3>Find Customers Who Rode Every Ride</h3>
-    <h4>(Query 10: Division -- Customers that have Rode all Rides)</h4> 
-    <div id="q10" class = "page">
+    <div id="q10" class = "page query-section">
+        <hr>
+        <h3>Find Customers Who Rode Every Ride</h3>
+        <h4>(Query 10: Division -- Customers that have Rode all Rides)</h4> 
         <form id="customersAllRidesForm">
             <button type="submit">Run query</button><br></br>
         </form>
@@ -434,7 +360,71 @@
         //     buttons[0].click();
         // }
     </script>
-    <!-- ===================================================================================== -->
+ 
+
+    <hr><br> <!-- ========================================================================= -->
+
+    <table style="width: 100%; border: none;" cellspacing="16" cellpadding="0">
+        <tr>
+            <td valign="top" style="width: 33%;">
+                <h3>Show Customers</h3>
+                <button id="refreshCustomersTableButton">Refresh Customers</button>
+                <table id="customersTable" border="1">
+                    <thead>
+                        <tr></tr>
+                    </thead>
+                    <tbody>
+                    </tbody>
+                </table>
+            </td>
+            <td valign="top" style="width: 33%;">
+                <h3>Show Loyalty Members</h3>
+                <button id="refreshLoyaltyMembersTableButton">Refresh Loyalty Members</button>
+                <table id="loyaltyMembersTable" border="1">
+                    <thead>
+                        <tr>
+                            <th>Customer ID</th>
+                            <th>Name</th>
+                            <th>Sex</th>
+                            <th>Date of Birth</th>
+                            <th>Loyalty ID</th>
+                            <th>Points</th>
+                        </tr>
+                    </thead>
+                    <tbody>
+                    </tbody>
+                </table>
+            </td>
+            <td valign="top" style="width: 33%;">
+                <h3>Show Guest Visits</h3>
+                <button id="refreshGuestVisitsTableButton">Refresh Guest Visits</button>
+                <table id="guestVisitsTable" border="1">
+                    <thead>
+                        <tr>
+                            <th>Customer ID</th>
+                            <th>Name</th>
+                            <th>Date of Visit</th>
+                        </tr>
+                    </thead>
+                    <tbody>
+                    </tbody>
+                </table>
+            </td>
+        </tr>
+    </table>
+
+    <hr> <!-- ========================================================================= -->
+
+    <h2>Schema Utilities</h2>
+    <button id="resetSchemaButton">Reset (Drop + Create + Insert)</button>
+    <button id="dropCreateButton">Reset With No Data (Drop + Create)</button>
+    <button id="populateButton">Add Example Data(Insert)</button>
+    <br>
+    <!-- A placeholder to display messages related to the reset operation. -->
+    <div id="resetResultMsg"></div>
+
+    <hr> <!-- ========================================================================= -->
+   <!-- ===================================================================================== -->
     <!-- External JavaScript file that contains the functionality/logic for the operations above. -->
     <script type="module" src="scripts.js"></script>
 </body>
