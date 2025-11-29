@@ -210,6 +210,16 @@ insert into booking2 values ( 2626, to_date('2025-07-18','YYYY-MM-DD'), 5 );
 insert into booking2 values ( 2727, to_date('2025-07-18','YYYY-MM-DD'), 5 );
 
 
+--Guest Bookings
+insert into booking2 values ( 7433, to_date('2025-07-28','YYYY-MM-DD'), 8 );
+insert into booking2 values ( 7434, to_date('2025-07-28','YYYY-MM-DD'), 8 );
+insert into booking2 values ( 7435, to_date('2025-07-28','YYYY-MM-DD'), 8 );
+
+insert into booking2 values ( 7436, to_date('2025-07-29','YYYY-MM-DD'), 9 );
+insert into booking2 values ( 7437, to_date('2025-07-29','YYYY-MM-DD'), 9 );
+
+insert into booking2 values ( 7438, to_date('2025-07-29','YYYY-MM-DD'), 10 );
+
 
 
 insert into ratemodifier values ( 0, 1.0 );
@@ -291,6 +301,17 @@ insert into ticket2 values ( 3334, 1002, to_date('2025-08-01','YYYY-MM-DD'), 1, 
 insert into ticket2 values ( 5003, 1003, to_date('2025-09-01','YYYY-MM-DD'), 2, 6 );
 insert into ticket2 values ( 5004, 1004, to_date('2025-10-01','YYYY-MM-DD'), 4, 12 );
 insert into ticket2 values ( 5005, 1005, to_date('2025-11-01','YYYY-MM-DD'), 1, 4 );
+
+--Guest Bookings
+
+insert into ticket2 values ( 63203, 7433, to_date('2025-09-01','YYYY-MM-DD'), 2, 6 );
+insert into ticket2 values ( 63204, 7434, to_date('2025-10-01','YYYY-MM-DD'), 4, 12 );
+insert into ticket2 values ( 63205, 7435, to_date('2025-11-01','YYYY-MM-DD'), 1, 4 );
+
+insert into ticket2 values ( 63206, 7436, to_date('2025-09-01','YYYY-MM-DD'), 2, 6 );
+insert into ticket2 values ( 63207, 7437, to_date('2025-10-01','YYYY-MM-DD'), 4, 12 );
+insert into ticket2 values ( 63208, 7438, to_date('2025-11-01','YYYY-MM-DD'), 1, 4 );
+
 
 
 
@@ -443,3 +464,12 @@ insert into forride values ( 'LogFlume', 5004 );
 insert into forride values ( 'BumperCars', 5005 );
 
 
+
+--Guest Bookings
+
+insert into forride values ( 'RollerCoaster', 63203 );
+insert into forride values ( 'FerrisWheel', 63204 );
+insert into forride values ( 'HauntedHouse', 63205 );
+insert into forride values ( 'LogFlume', 63206 );
+insert into forride values ( 'BumperCars', 63207 );
+insert into forride values ( 'LogFlume', 63208 );
