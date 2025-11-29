@@ -3,7 +3,8 @@ BEGIN
     EXECUTE IMMEDIATE 'DROP TABLE ' || t.table_name || ' CASCADE CONSTRAINTS';
   END LOOP;
 END;
-;
+/
+
 CREATE TABLE Ride (
   RideName      VARCHAR2(255) PRIMARY KEY,
   Capacity      INTEGER,      
