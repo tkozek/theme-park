@@ -305,12 +305,12 @@ insert into ticket2 values ( 5005, 1005, to_date('2025-11-01','YYYY-MM-DD'), 1, 
 --Guest Bookings
 
 insert into ticket2 values ( 63203, 7433, to_date('2025-09-01','YYYY-MM-DD'), 2, 6 );
-insert into ticket2 values ( 63204, 7434, to_date('2025-09-01','YYYY-MM-DD'), 4, 12 );
-insert into ticket2 values ( 63205, 7435, to_date('2025-09-01','YYYY-MM-DD'), 1, 4 );
+insert into ticket2 values ( 63204, 7434, to_date('2025-09-01','YYYY-MM-DD'), 4, 6 );
+insert into ticket2 values ( 63205, 7435, to_date('2025-09-01','YYYY-MM-DD'), 1, 6 );
 
 insert into ticket2 values ( 63206, 7436, to_date('2025-09-01','YYYY-MM-DD'), 2, 6 );
-insert into ticket2 values ( 63207, 7437, to_date('2025-09-01','YYYY-MM-DD'), 4, 12 );
-insert into ticket2 values ( 63208, 7438, to_date('2025-09-01','YYYY-MM-DD'), 1, 4 );
+insert into ticket2 values ( 63207, 7437, to_date('2025-09-01','YYYY-MM-DD'), 4, 6 );
+insert into ticket2 values ( 63208, 7438, to_date('2025-09-01','YYYY-MM-DD'), 1, 6 );
 
 
 
